@@ -178,7 +178,7 @@ void Game::TestInit()
     const filesystem::path basePath = basePathPtr;
 #endif
 
-    const auto fontPath = basePath / "assets/Inter-VariableFont.ttf";
+    const auto fontPath = basePath / "assets/fonts/Inter-VariableFont.ttf";
     TTF_Font *font = TTF_OpenFont(fontPath.string().c_str(), 36);
     const std::string_view text = "Hello SDL!";
     SDL_Surface *surfaceMessage = TTF_RenderText_Solid(font, text.data(), text.length(), {255, 255, 255});
@@ -192,7 +192,7 @@ void Game::TestInit()
     TTF_CloseFont(font);
     SDL_DestroySurface(surfaceMessage);
 
-    auto svg_surface = IMG_Load((basePath / "assets/gs_tiger.svg").string().c_str());
+    auto svg_surface = IMG_Load((basePath / "assets/sprites/gs_tiger.svg").string().c_str());
     m_imageTex = SDL_CreateTextureFromSurface(m_renderer, svg_surface);
     SDL_DestroySurface(svg_surface);
 
