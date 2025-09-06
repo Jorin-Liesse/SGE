@@ -199,7 +199,7 @@ void Game::TestInit()
 
     m_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
     m_track = MIX_CreateTrack(m_mixer);
-    auto musicPath = basePath / "assets/the_entertainer.ogg";
+    auto musicPath = basePath / "assets/audio/the_entertainer.ogg";
     auto music = MIX_LoadAudio(m_mixer, musicPath.string().c_str(), false);
     MIX_SetTrackAudio(m_track, music);
     MIX_PlayTrack(m_track, NULL);
