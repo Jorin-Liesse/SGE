@@ -26,8 +26,19 @@ bool Game::Init()
     m_appResult = SDL_APP_CONTINUE;
     m_mixer = nullptr;
 
-    m_window = SDL_CreateWindow("SDL Minimal Sample", 500, 500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+    AssetsHandler::GetInstance().Init();
+
+    m_infoDataId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
+    cJSON *infoJson = AssetsHandler::GetInstance().GetJson(m_infoDataId);
+    string title = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "project"));
+    string iconPath = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "icon-path"));
+
+    m_window = SDL_CreateWindow(title.c_str(), 500, 500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     m_renderer = SDL_CreateRenderer(m_window, NULL);
+
+    SDL_Surface *icon = IMG_Load(iconPath.c_str());
+    SDL_SetWindowIcon(m_window, icon);
+    SDL_DestroySurface(icon);
 
     m_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
 

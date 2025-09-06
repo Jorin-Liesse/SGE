@@ -1,5 +1,7 @@
 #pragma once
 #include "patterns/singleton/singleton.h"
+#include "assetsHandler.h"
+
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_mixer/SDL_mixer.h>
