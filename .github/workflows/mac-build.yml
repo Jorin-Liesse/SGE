@@ -21,8 +21,8 @@ jobs:
 
           - name: Set project env vars
             run: |
-              ICON_PATH=$(python3 -c "import json; print(json.load(open('assets/info.json'))['icon-path'])")
-              PROJECT=$(python3 -c "import json; print(json.load(open('assets/info.json'))['project'])")
+              ICON_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['icon-path'])")
+              PROJECT=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['project'])")
               echo "ICON_PATH=$ICON_PATH" >> $GITHUB_ENV
               echo "PROJECT=$PROJECT" >> $GITHUB_ENV
 

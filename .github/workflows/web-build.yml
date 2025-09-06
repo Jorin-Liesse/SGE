@@ -14,20 +14,20 @@ jobs:
 
       - name: Set project env vars
         run: |
-          PROJECT=$(python3 -c "import json; print(json.load(open('assets/info.json'))['project'])")
-          COMPANY=$(python3 -c "import json; print(json.load(open('assets/info.json'))['company'])")
-          VERSION=$(python3 -c "import json; print(json.load(open('assets/info.json'))['version'])")
-          DESCRIPTION=$(python3 -c "import json; print(json.load(open('assets/info.json'))['description'])")
-          AUTHOR=$(python3 -c "import json; print(json.load(open('assets/info.json'))['author'])")
-          LICENSE=$(python3 -c "import json; print(json.load(open('assets/info.json'))['license'])")
-          CREDITS=$(python3 -c "import json; print(json.load(open('assets/info.json'))['credits'])")
-          ORIENTATION=$(python3 -c "import json; print(json.load(open('assets/info.json'))['orientation'])")
-          WINDOW_MODE=$(python3 -c "import json; print(json.load(open('assets/info.json'))['window-mode'])")
-          ICON_PATH=$(python3 -c "import json; print(json.load(open('assets/info.json'))['icon-path'])")
-          ASSETS_PATH=$(python3 -c "import json; print(json.load(open('assets/info.json'))['assets-path'])")
-          RESOURCES_PATH=$(python3 -c "import json; print(json.load(open('assets/info.json'))['resources-path'])")
-          INCLUDE_PATH=$(python3 -c "import json; print(json.load(open('assets/info.json'))['include-path'])")
-          SOURCE_PATH=$(python3 -c "import json; print(json.load(open('assets/info.json'))['source-path'])")
+          PROJECT=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['project'])")
+          COMPANY=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['company'])")
+          VERSION=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['version'])")
+          DESCRIPTION=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['description'])")
+          AUTHOR=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['author'])")
+          LICENSE=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['license'])")
+          CREDITS=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['credits'])")
+          ORIENTATION=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['orientation'])")
+          WINDOW_MODE=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['window-mode'])")
+          ICON_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['icon-path'])")
+          ASSETS_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['assets-path'])")
+          RESOURCES_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['resources-path'])")
+          INCLUDE_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['include-path'])")
+          SOURCE_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['source-path'])")
 
           echo "PROJECT=$PROJECT" >> $GITHUB_ENV
           echo "COMPANY=$COMPANY" >> $GITHUB_ENV

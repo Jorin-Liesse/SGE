@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 #-------------------------------------------------------
 
-file(READ ${CMAKE_CURRENT_LIST_DIR}/assets/info.json JSON_CONTENT)
+file(READ ${CMAKE_CURRENT_LIST_DIR}/assets/data/info.json JSON_CONTENT)
 
 # Extract project name
 string(REGEX MATCH "\"project\"[ \t]*:[ \t]*\"([^\"]+)\"" _ MATCH_NAME ${JSON_CONTENT})
