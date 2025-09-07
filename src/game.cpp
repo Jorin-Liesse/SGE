@@ -44,14 +44,16 @@ bool Game::Init()
 
     TestInit();
 
-    // SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
-    // SDL_SetRenderVSync(m_renderer, -1); // enable vysnc
+    SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
+    SDL_SetRenderVSync(m_renderer, -1); // enable vysnc
 
     return true;
 }
 
 void Game::Cleanup()
 {
+    AssetsHandler::GetInstance().CleanUp();
+
     if (m_renderer)
         SDL_DestroyRenderer(m_renderer);
     if (m_window)
