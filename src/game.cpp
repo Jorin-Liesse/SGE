@@ -27,11 +27,24 @@ bool Game::Init()
     m_mixer = nullptr;
 
     AssetsHandler::GetInstance().Init();
+    SaveDataHandler::GetInstance().Init();
 
-    m_infoDataId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
-    cJSON *infoJson = AssetsHandler::GetInstance().GetJson(m_infoDataId);
+    int infoDataId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
+    cJSON *infoJson = AssetsHandler::GetInstance().GetJson(infoDataId);
+
     string title = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "project"));
     string iconPath = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "icon-path"));
+    
+    int defaultWidth = cJSON_GetObjectItem(infoJson, "default-width")->valueint;
+    int defaultHeight = cJSON_GetObjectItem(infoJson, "default-height")->valueint;
+    string defaultWindowMode = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "default-window-mode"));
+    int defaultFps = cJSON_GetObjectItem(infoJson, "default-fps")->valueint;
+    bool defaultVsync = cJSON_GetObjectItem(infoJson, "default-vsync")->valueint;
+    float defaultAudioVolume = float(cJSON_GetObjectItem(infoJson, "default-audio-volume")->valuedouble);
+    float defaultMusicVolume = float(cJSON_GetObjectItem(infoJson, "default-music-volume")->valuedouble);
+    float defaultSoundVolume = float(cJSON_GetObjectItem(infoJson, "default-sound-volume")->valuedouble);
+
+    AssetsHandler::GetInstance().UnUsedJson(infoDataId);
 
     m_window = SDL_CreateWindow(title.c_str(), 500, 500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     m_renderer = SDL_CreateRenderer(m_window, NULL);
@@ -44,7 +57,7 @@ bool Game::Init()
 
     TestInit();
 
-    SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
+    SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN); // SDL_WINDOW_BORDERLESS // SDL_WINDOW_FULLSCREEN //
     SDL_SetRenderVSync(m_renderer, -1); // enable vysnc
 
     return true;
@@ -52,6 +65,7 @@ bool Game::Init()
 
 void Game::Cleanup()
 {
+    SaveDataHandler::GetInstance().CleanUp();
     AssetsHandler::GetInstance().CleanUp();
 
     if (m_renderer)
@@ -60,15 +74,11 @@ void Game::Cleanup()
         SDL_DestroyWindow(m_window);
 
     MIX_StopAllTracks(m_mixer, 0);
+    MIX_DestroyMixer(m_mixer);
 
     MIX_Quit();
     TTF_Quit();
     SDL_Quit();
-
-    delete m_renderer;
-    delete m_window;
-    delete m_event;
-    delete m_mixer;
 }
 
 #pragma endregion

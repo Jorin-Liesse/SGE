@@ -25,9 +25,9 @@
     "default-fps": 60,
     "default-vsync": true,
 
-    "default-audio-volume": 100,
-    "default-music-volume": 100,
-    "default-sound-volume": 100,
+    "default-audio-volume": 1,
+    "default-music-volume": 1,
+    "default-sound-volume": 1,
 
     "icon-path": "assets/icons/icon.png",
     "assets-path": "assets",

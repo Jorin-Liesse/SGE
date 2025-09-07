@@ -1,6 +1,7 @@
 #pragma once
 #include "patterns/singleton/singleton.h"
 #include "assetsHandler.h"
+#include "saveDataHandler.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -56,6 +57,12 @@ namespace sge
         SDL_AppResult m_appResult;
         MIX_Mixer *m_mixer;
 
+        // int m_width, m_height;
+        // bool m_vsync;
+        // int m_fps;
+        // float m_audioVolume, m_musicVolume, m_soundVolume;
+        // std::string m_windowMode;
+
         //
 
         SDL_Texture *m_messageTex, *m_imageTex;
@@ -72,7 +79,5 @@ namespace sge
         void TestRender();
 
         //
-
-        int m_infoDataId;
     };
 }
