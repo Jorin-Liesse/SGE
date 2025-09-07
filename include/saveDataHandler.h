@@ -23,7 +23,11 @@ namespace sge
         void CleanUp();
         void Init();
 
-        void SaveData(const std::string& data);
+        void SaveData(const std::string& key, const std::string& value);
+        void SaveData(const std::string& key, int value);
+        void SaveData(const std::string& key, float value);
+        void SaveData(const std::string& key, bool value);
+        
         std::string LoadData();
 
     private:
