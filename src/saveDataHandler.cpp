@@ -9,7 +9,7 @@ using namespace sge;
 
 #pragma region Constructor / Destructor
 
-AssetsHandler::~AssetsHandler()
+SaveDataHandler::~SaveDataHandler()
 {
     CleanUp();
 }
@@ -29,7 +29,15 @@ void SaveDataHandler::Init()
     AssetsHandler::GetInstance().UnUsedJson(infoDataId);
 
 #ifdef __EMSCRIPTEN__
-    m_path = format("/", company.c_str(), "/", title.c_str(), "/saveData.json");
+    string folderPath = format("/", company.c_str(), "/", title.c_str());
+    m_path = format(folderPath, "/saveData.json");
+
+    EM_ASM(
+        if (!FS.analyzePath(folderPath).exists) {
+            FS.mkdir(folderPath);
+            FS.mount(IDBFS, {}, folderPath);
+        }
+    );
 #else
     char *prefPath = SDL_GetPrefPath(company.c_str(), title.c_str());
     m_path = std::string(prefPath) + "saveData.json";

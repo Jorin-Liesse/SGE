@@ -23,10 +23,10 @@ namespace sge
         void CleanUp();
         void Init();
 
-    private:
-        // std::string m_companyName;
-        // std::string m_gameName;
+        void SaveData(const std::string& data);
+        std::string LoadData();
 
+    private:
         std::string m_path;
     };
 }
