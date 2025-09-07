@@ -33,10 +33,15 @@ void SaveDataHandler::Init()
     m_path = folderPath + "/saveData.json";
 
     EM_ASM(
-        if (!FS.analyzePath(folderPath).exists) {
-            FS.mkdir(folderPath);
-            FS.mount(IDBFS, {}, folderPath);
-        }
+        {
+            var folderPath = UTF8ToString($0); // Convert C++ string to JS string
+            if (!FS.analyzePath(folderPath).exists)
+            {
+                FS.mkdir(folderPath);
+                FS.mount(IDBFS, {}, folderPath);
+            }
+        },
+        folderPath.c_str() // <-- pass C++ string here
     );
 #else
     char *prefPath = SDL_GetPrefPath(company.c_str(), title.c_str());
