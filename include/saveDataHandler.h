@@ -28,10 +28,10 @@ namespace sge
         void SaveData(const std::string& key, float value);
         void SaveData(const std::string& key, bool value);
 
-        std::string LoadStringData(const std::string& key);
-        int LoadIntData(const std::string& key);
-        float LoadFloatData(const std::string& key);
-        bool LoadBoolData(const std::string& key);
+        std::string LoadStringData(const std::string& key, std::string defaultValue = "");
+        int LoadIntData(const std::string& key, int defaultValue = 0);
+        float LoadFloatData(const std::string& key, float defaultValue = 0.0f);
+        bool LoadBoolData(const std::string& key, bool defaultValue = false);
 
     private:
         std::string m_path;
