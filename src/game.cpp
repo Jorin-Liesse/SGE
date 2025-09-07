@@ -1,6 +1,7 @@
 #pragma region Includes / Defines
 
 #include "game.h"
+#include <format>
 
 using namespace std;
 using namespace sge;
@@ -44,7 +45,7 @@ bool Game::Init()
     float defaultMusicVolume = float(cJSON_GetObjectItem(infoJson, "default-music-volume")->valuedouble);
     float defaultSoundVolume = float(cJSON_GetObjectItem(infoJson, "default-sound-volume")->valuedouble);
 
-    ShowMessage("Info", std::format("Title: {}\nIcon Path: {}\nWidth: {}\nHeight: {}\nWindow Mode: {}\nFPS: {}\nVSync: {}\nAudio Volume: {}\nMusic Volume: {}\nSound Volume: {}",
+    ShowMessage("Info", format("Title: {}\nIcon Path: {}\nWidth: {}\nHeight: {}\nWindow Mode: {}\nFPS: {}\nVSync: {}\nAudio Volume: {}\nMusic Volume: {}\nSound Volume: {}",
         title, iconPath, defaultWidth, defaultHeight, defaultWindowMode, defaultFps, defaultVsync, defaultAudioVolume, defaultMusicVolume, defaultSoundVolume));
 
     AssetsHandler::GetInstance().UnUsedJson(infoDataId);
