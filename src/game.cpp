@@ -1,7 +1,6 @@
 #pragma region Includes / Defines
 
 #include "game.h"
-#include <format>
 
 using namespace std;
 using namespace sge;
@@ -35,7 +34,7 @@ bool Game::Init()
 
     string title = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "project"));
     string iconPath = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "icon-path"));
-    
+
     int defaultWidth = cJSON_GetObjectItem(infoJson, "default-width")->valueint;
     int defaultHeight = cJSON_GetObjectItem(infoJson, "default-height")->valueint;
     string defaultWindowMode = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "default-window-mode"));
@@ -45,8 +44,27 @@ bool Game::Init()
     float defaultMusicVolume = float(cJSON_GetObjectItem(infoJson, "default-music-volume")->valuedouble);
     float defaultSoundVolume = float(cJSON_GetObjectItem(infoJson, "default-sound-volume")->valuedouble);
 
-    ShowMessage("Info", format("Title: {}\nIcon Path: {}\nWidth: {}\nHeight: {}\nWindow Mode: {}\nFPS: {}\nVSync: {}\nAudio Volume: {}\nMusic Volume: {}\nSound Volume: {}",
-        title, iconPath, defaultWidth, defaultHeight, defaultWindowMode, defaultFps, defaultVsync, defaultAudioVolume, defaultMusicVolume, defaultSoundVolume));
+    // SaveDataHandler::GetInstance().SaveData("player_name", "Alice");
+    // SaveDataHandler::GetInstance().SaveData("score", 100);
+    // SaveDataHandler::GetInstance().SaveData("health", 75.5f);
+    // SaveDataHandler::GetInstance().SaveData("has_key", true);
+
+    int width = SaveDataHandler::GetInstance().LoadIntData("width", defaultWidth);
+    int height = SaveDataHandler::GetInstance().LoadIntData("height", defaultHeight);
+    string windowMode = SaveDataHandler::GetInstance().LoadStringData("window_mode", defaultWindowMode);
+    int fps = SaveDataHandler::GetInstance().LoadIntData("fps", defaultFps);
+    bool vsync = SaveDataHandler::GetInstance().LoadBoolData("vsync", defaultVsync);
+    float audioVolume = SaveDataHandler::GetInstance().LoadFloatData("audio_volume", defaultAudioVolume);
+    float musicVolume = SaveDataHandler::GetInstance().LoadFloatData("music_volume", defaultMusicVolume);
+    float soundVolume = SaveDataHandler::GetInstance().LoadFloatData("sound_volume", defaultSoundVolume);
+
+    int counter = SaveDataHandler::GetInstance().LoadIntData("launch_counter", 0);
+    counter++;
+    SaveDataHandler::GetInstance().SaveData("launch_counter", counter);
+    ShowMessage("Info", "This game has been launched " + to_string(counter) + " times!");
+
+    // ShowMessage("Info", format("Title: {}\nIcon Path: {}\nWidth: {}\nHeight: {}\nWindow Mode: {}\nFPS: {}\nVSync: {}\nAudio Volume: {}\nMusic Volume: {}\nSound Volume: {}",
+    //     title, iconPath, defaultWidth, defaultHeight, defaultWindowMode, defaultFps, defaultVsync, defaultAudioVolume, defaultMusicVolume, defaultSoundVolume));
 
     AssetsHandler::GetInstance().UnUsedJson(infoDataId);
 
@@ -62,7 +80,7 @@ bool Game::Init()
     TestInit();
 
     SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN); // SDL_WINDOW_BORDERLESS // SDL_WINDOW_FULLSCREEN //
-    SDL_SetRenderVSync(m_renderer, -1); // enable vysnc
+    SDL_SetRenderVSync(m_renderer, -1);                       // enable vysnc
 
     return true;
 }
@@ -211,7 +229,6 @@ void Game::TestInit()
     auto svg_surface = IMG_Load((basePath / "assets/sprites/gs_tiger.svg").string().c_str());
     m_imageTex = SDL_CreateTextureFromSurface(m_renderer, svg_surface);
     SDL_DestroySurface(svg_surface);
-
 
     m_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
     m_track = MIX_CreateTrack(m_mixer);

@@ -142,6 +142,8 @@ std::string SaveDataHandler::LoadStringData(const std::string &key, std::string 
     cJSON *item = cJSON_GetObjectItem(m_root, key.c_str());
     if (cJSON_IsString(item))
         return item->valuestring;
+    SaveData(key, defaultValue);
+    
     return defaultValue;
 }
 
@@ -150,6 +152,8 @@ int SaveDataHandler::LoadIntData(const std::string &key, int defaultValue)
     cJSON *item = cJSON_GetObjectItem(m_root, key.c_str());
     if (cJSON_IsNumber(item))
         return item->valueint;
+
+    SaveData(key, defaultValue);
     return defaultValue;
 }
 
@@ -158,6 +162,8 @@ float SaveDataHandler::LoadFloatData(const std::string &key, float defaultValue)
     cJSON *item = cJSON_GetObjectItem(m_root, key.c_str());
     if (cJSON_IsNumber(item))
         return (float)item->valuedouble;
+
+    SaveData(key, defaultValue);
     return defaultValue;
 }
 
@@ -166,6 +172,8 @@ bool SaveDataHandler::LoadBoolData(const std::string &key, bool defaultValue)
     cJSON *item = cJSON_GetObjectItem(m_root, key.c_str());
     if (cJSON_IsBool(item))
         return cJSON_IsTrue(item);
+
+    SaveData(key, defaultValue);
     return defaultValue;
 }
 
