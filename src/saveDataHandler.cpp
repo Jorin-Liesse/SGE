@@ -29,8 +29,8 @@ void SaveDataHandler::Init()
     AssetsHandler::GetInstance().UnUsedJson(infoDataId);
 
 #ifdef __EMSCRIPTEN__
-    string folderPath = std::string("/") + company.c_str() + std::string("/") + title.c_str();
-    m_path = folderPath + std::string("/saveData.json");
+    std::string folderPath = "/" + company + "/" + title;
+    m_path = folderPath + "/saveData.json";
 
     EM_ASM(
         if (!FS.analyzePath(folderPath).exists) {
