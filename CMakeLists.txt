@@ -144,6 +144,11 @@ target_compile_features(${EXECUTABLE_NAME} PUBLIC cxx_std_23)
 # on Web targets, we need CMake to generate a HTML webpage. 
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".js" CACHE INTERNAL "")
+
+    target_link_options(${EXECUTABLE_NAME} PRIVATE
+        -lidbfs.js
+        -s FORCE_FILESYSTEM=1
+    )
 endif()
 
 # Configure SDL by calling its CMake file.
