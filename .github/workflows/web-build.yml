@@ -16,33 +16,17 @@ jobs:
         run: |
           PROJECT=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['project'])")
           COMPANY=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['company'])")
-          VERSION=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['version'])")
-          DESCRIPTION=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['description'])")
-          AUTHOR=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['author'])")
-          LICENSE=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['license'])")
-          CREDITS=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['credits'])")
-          ORIENTATION=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['orientation'])")
-          WINDOW_MODE=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['window-mode'])")
+          MANIFEST_ORIENTATION=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['manifest-orientation'])")
+          MANIFEST_WINDOW_MODE=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['manifest-window-mode'])")
           ICON_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['icon-path'])")
-          ASSETS_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['assets-path'])")
           RESOURCES_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['resources-path'])")
-          INCLUDE_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['include-path'])")
-          SOURCE_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['source-path'])")
 
           echo "PROJECT=$PROJECT" >> $GITHUB_ENV
           echo "COMPANY=$COMPANY" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "DESCRIPTION=$DESCRIPTION" >> $GITHUB_ENV
-          echo "AUTHOR=$AUTHOR" >> $GITHUB_ENV
-          echo "LICENSE=$LICENSE" >> $GITHUB_ENV
-          echo "CREDITS=$CREDITS" >> $GITHUB_ENV
-          echo "ORIENTATION=$ORIENTATION" >> $GITHUB_ENV
-          echo "WINDOW_MODE=$WINDOW_MODE" >> $GITHUB_ENV
+          echo "MANIFEST_ORIENTATION=$MANIFEST_ORIENTATION" >> $GITHUB_ENV
+          echo "MANIFEST_WINDOW_MODE=$MANIFEST_WINDOW_MODE" >> $GITHUB_ENV
           echo "ICON_PATH=$ICON_PATH" >> $GITHUB_ENV
-          echo "ASSETS_PATH=$ASSETS_PATH" >> $GITHUB_ENV
           echo "RESOURCES_PATH=$RESOURCES_PATH" >> $GITHUB_ENV
-          echo "INCLUDE_PATH=$INCLUDE_PATH" >> $GITHUB_ENV
-          echo "SOURCE_PATH=$SOURCE_PATH" >> $GITHUB_ENV
 
 
       - name: Get Emscripten
