@@ -11,6 +11,7 @@ using namespace sge;
 
 SaveDataHandler::~SaveDataHandler()
 {
+    Commit();
     CleanUp();
 }
 
@@ -59,6 +60,8 @@ void SaveDataHandler::Init()
 
 void SaveDataHandler::CleanUp()
 {
+    if (m_root)
+        cJSON_Delete(m_root);
 }
 
 #pragma endregion
@@ -79,11 +82,15 @@ void SaveDataHandler::LoadFromDisk()
     file.close();
 
     std::string content = buffer.str();
-    m_root = cJSON_Parse(content.c_str());
-    if (!m_root)
+    if (content.empty())
     {
         m_root = cJSON_CreateObject();
+        return;
     }
+
+    m_root = cJSON_Parse(content.c_str());
+    if (!m_root)
+        m_root = cJSON_CreateObject();
 }
 
 void SaveDataHandler::Commit()
