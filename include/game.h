@@ -2,6 +2,7 @@
 #include "patterns/singleton/singleton.h"
 #include "assetsHandler.h"
 #include "saveDataHandler.h"
+#include "cJSON.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>

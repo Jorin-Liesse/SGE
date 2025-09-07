@@ -1,6 +1,7 @@
 #pragma once
 #include "patterns/singleton/singleton.h"
 #include "game.h"
+#include "cJSON.h"
 
 #include <SDL3/SDL.h>
 #include <fstream>
@@ -35,5 +36,9 @@ namespace sge
 
     private:
         std::string m_path;
+        cJSON* m_root;
+
+        void Commit();
+        void LoadFromDisk();
     };
 }

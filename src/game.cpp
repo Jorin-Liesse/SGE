@@ -44,6 +44,9 @@ bool Game::Init()
     float defaultMusicVolume = float(cJSON_GetObjectItem(infoJson, "default-music-volume")->valuedouble);
     float defaultSoundVolume = float(cJSON_GetObjectItem(infoJson, "default-sound-volume")->valuedouble);
 
+    ShowMessage("Info", std::format("Title: {}\nIcon Path: {}\nWidth: {}\nHeight: {}\nWindow Mode: {}\nFPS: {}\nVSync: {}\nAudio Volume: {}\nMusic Volume: {}\nSound Volume: {}",
+        title, iconPath, defaultWidth, defaultHeight, defaultWindowMode, defaultFps, defaultVsync, defaultAudioVolume, defaultMusicVolume, defaultSoundVolume));
+
     AssetsHandler::GetInstance().UnUsedJson(infoDataId);
 
     m_window = SDL_CreateWindow(title.c_str(), 500, 500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
