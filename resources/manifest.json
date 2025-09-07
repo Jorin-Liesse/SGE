@@ -2,10 +2,10 @@
   "name": "${PROJECT}",
   "start_url": "/${PROJECT}/",
   "scope": "/${PROJECT}/",
-  "display": "${WINDOW_MODE}",
+  "display": "${MANIFEST_WINDOW_MODE}",
   "theme_color": "#000",
   "background_color": "#000",
-  "orientation": "${ORIENTATION}",
+  "orientation": "${MANIFEST_ORIENTATION}",
   "icons": [
     {
       "src": "${ICON_PATH}",

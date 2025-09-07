@@ -15,8 +15,19 @@
         }
     ],
 
-    "orientation": "landscape",
-    "window-mode": "fullscreen",
+    "manifest-orientation": "landscape",
+    "manifest-window-mode": "fullscreen",
+
+    "default-width": 1920,
+    "default-height": 1080,
+    "default-window-mode": "fullscreen",
+
+    "default-fps": 60,
+    "default-vsync": true,
+
+    "default-audio-volume": 100,
+    "default-music-volume": 100,
+    "default-sound-volume": 100,
 
     "icon-path": "assets/icons/icon.png",
     "assets-path": "assets",

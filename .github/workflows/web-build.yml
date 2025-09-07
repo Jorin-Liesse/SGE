@@ -77,19 +77,9 @@ jobs:
         run: |
           # Export all workflow env vars to shell
           export PROJECT="${{ env.PROJECT }}"
-          export COMPANY="${{ env.COMPANY }}"
-          export VERSION="${{ env.VERSION }}"
-          export DESCRIPTION="${{ env.DESCRIPTION }}"
-          export AUTHOR="${{ env.AUTHOR }}"
-          export LICENSE="${{ env.LICENSE }}"
-          export CREDITS="${{ env.CREDITS }}"
-          export ORIENTATION="${{ env.ORIENTATION }}"
-          export WINDOW_MODE="${{ env.WINDOW_MODE }}"
+          export MANIFEST_ORIENTATION="${{ env.MANIFEST_ORIENTATION }}"
+          export MANIFEST_WINDOW_MODE="${{ env.MANIFEST_WINDOW_MODE }}"
           export ICON_PATH="${{ env.ICON_PATH }}"
-          export ASSETS_PATH="${{ env.ASSETS_PATH }}"
-          export RESOURCES_PATH="${{ env.RESOURCES_PATH }}"
-          export INCLUDE_PATH="${{ env.INCLUDE_PATH }}"
-          export SOURCE_PATH="${{ env.SOURCE_PATH }}"
 
           # Replace placeholders in all relevant files
           for file in _site/index.html _site/script.js _site/style.css _site/manifest.json; do
