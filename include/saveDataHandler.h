@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 #include <fstream>
 #include <string>
+#include <format>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
