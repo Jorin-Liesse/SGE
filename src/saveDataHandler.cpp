@@ -33,16 +33,15 @@ void SaveDataHandler::Init()
     m_path = folderPath + "/saveData.json";
 
     EM_ASM(
-        {
-            var folderPath = UTF8ToString($0); // Convert C++ string to JS string
-            if (!FS.analyzePath(folderPath).exists)
-            {
-                FS.mkdir(folderPath);
-                FS.mount(IDBFS, {}, folderPath);
-            }
-        },
-        folderPath.c_str() // <-- pass C++ string here
-    );
+    {
+        var folderPath = UTF8ToString($0);
+        if (!FS.analyzePath(folderPath).exists) {
+            FS.mkdirTree(folderPath);   // ✅ creates parents automatically
+            FS.mount(IDBFS, {}, folderPath);
+        }
+    },
+    folderPath.c_str()
+);
 #else
     char *prefPath = SDL_GetPrefPath(company.c_str(), title.c_str());
     m_path = std::string(prefPath) + "saveData.json";
