@@ -79,6 +79,16 @@ namespace sge
         void TestUpdate();
         void TestRender();
 
+        bool SaveData(const std::string &filename, const std::string &key, const std::string &value);
+        std::string LoadData(const std::string &filename, const std::string &key, const std::string &defaultValue = "");
+
+        void InitSaveFolderWeb();
+        bool SaveDataWeb(const std::string &key, const std::string &value);
+        std::string LoadDataWeb(const std::string &key, const std::string &defaultValue = "");
+
+        const std::string SAVE_FOLDER = "/MyCompany/MyGame";
+        const std::string SAVE_FILE = SAVE_FOLDER + "/saveData.json";
+
         //
     };
 }

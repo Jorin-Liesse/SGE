@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build (x64 Windows)",
+            "type": "shell",
+            "command": "bash",
+            "args": ["./config/win-build.sh"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build (Web)",
+            "type": "shell",
+            "command": "bash",
+            "args": ["./config/web-build.sh"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
