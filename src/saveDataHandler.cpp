@@ -11,7 +11,6 @@ using namespace sge;
 
 SaveDataHandler::~SaveDataHandler()
 {
-    Commit();
     CleanUp();
 }
 
@@ -21,170 +20,72 @@ SaveDataHandler::~SaveDataHandler()
 
 void SaveDataHandler::Init()
 {
-    m_root = nullptr;
+    m_count = -1;
 
-    int infoDataId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
-    cJSON *infoJson = AssetsHandler::GetInstance().GetJson(infoDataId);
 
-    string title = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "project"));
-    string company = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "company"));
-
-    AssetsHandler::GetInstance().UnUsedJson(infoDataId);
-
-#ifdef __EMSCRIPTEN__
-    std::string folderPath = "/" + company + "/" + title;
-    m_path = folderPath + "/saveData.json";
-
+    #ifdef __EMSCRIPTEN__
     EM_ASM(
-        {
-            var folderPath = UTF8ToString($0);
-            if (!FS.analyzePath(folderPath).exists)
-            {
-                FS.mkdirTree(folderPath);
-                FS.mount(IDBFS, {}, folderPath);
-            }
-        },
-        folderPath.c_str());
+        FS.mkdir('/persistent');
+        FS.mount(IDBFS, {}, '/persistent');
+        FS.syncfs(true, function (err) {
+            if (err) console.error("Load sync error:", err);
+        });
+    );
+    #endif
 
-    EM_ASM(FS.syncfs(true, function(err) { if(err) console.log("Load error", err); }));
-#else
-    char *prefPath = SDL_GetPrefPath(company.c_str(), title.c_str());
-    m_path = std::string(prefPath) + "saveData.json";
-    SDL_free(prefPath);
-#endif
+    // Load existing counter
+    load_counter();
 
-    LoadFromDisk();
+    // Increment on each visit
+    m_count++;
 
-    // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), m_path.c_str(), nullptr);
+    // Save and persist
+    save_counter();
+    persist_counter();
+
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Counter", std::to_string(m_count).c_str(), nullptr);
 }
 
 void SaveDataHandler::CleanUp()
 {
-    if (m_root)
-        cJSON_Delete(m_root);
 }
 
 #pragma endregion
 
 #pragma region Private Methods
-
-void SaveDataHandler::LoadFromDisk()
-{
-    std::ifstream file(m_path);
-    if (!file.is_open())
-    {
-        m_root = cJSON_CreateObject();
-        return;
-    }
-
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    file.close();
-
-    std::string content = buffer.str();
-    if (content.empty())
-    {
-        m_root = cJSON_CreateObject();
-        return;
-    }
-
-    m_root = cJSON_Parse(content.c_str());
-    if (!m_root)
-        m_root = cJSON_CreateObject();
-}
-
-void SaveDataHandler::Commit()
-{
-    if (!m_root)
-        return;
-
-    char *jsonStr = cJSON_Print(m_root);
-    if (!jsonStr)
-        return;
-
-    std::ofstream file(m_path, std::ios::binary);
-    if (file.is_open())
-    {
-        file.write(jsonStr, strlen(jsonStr));
-        file.close();
-    }
-    cJSON_free(jsonStr);
-
-#ifdef __EMSCRIPTEN__
-    EM_ASM(FS.syncfs(false, function(err) { if(err) console.log("Save error", err); }));
-#endif
-}
-
 #pragma endregion
 
 #pragma region Public Methods
-
-void SaveDataHandler::SaveData(const std::string &key, const std::string &value)
-{
-    cJSON_ReplaceItemInObject(m_root, key.c_str(), cJSON_CreateString(value.c_str()));
-    Commit();
-}
-
-void SaveDataHandler::SaveData(const std::string &key, int value)
-{
-    cJSON_ReplaceItemInObject(m_root, key.c_str(), cJSON_CreateNumber(value));
-    Commit();
-}
-
-void SaveDataHandler::SaveData(const std::string &key, float value)
-{
-    cJSON_ReplaceItemInObject(m_root, key.c_str(), cJSON_CreateNumber(value));
-    Commit();
-}
-
-void SaveDataHandler::SaveData(const std::string &key, bool value)
-{
-    cJSON_ReplaceItemInObject(m_root, key.c_str(), cJSON_CreateBool(value));
-    Commit();
-}
-
-// --- LoadData overloads ---
-std::string SaveDataHandler::LoadStringData(const std::string &key, std::string defaultValue)
-{
-    cJSON *item = cJSON_GetObjectItem(m_root, key.c_str());
-    if (cJSON_IsString(item))
-        return item->valuestring;
-    SaveData(key, defaultValue);
-    
-    return defaultValue;
-}
-
-int SaveDataHandler::LoadIntData(const std::string &key, int defaultValue)
-{
-    cJSON *item = cJSON_GetObjectItem(m_root, key.c_str());
-    if (cJSON_IsNumber(item))
-        return item->valueint;
-
-    SaveData(key, defaultValue);
-    return defaultValue;
-}
-
-float SaveDataHandler::LoadFloatData(const std::string &key, float defaultValue)
-{
-    cJSON *item = cJSON_GetObjectItem(m_root, key.c_str());
-    if (cJSON_IsNumber(item))
-        return (float)item->valuedouble;
-
-    SaveData(key, defaultValue);
-    return defaultValue;
-}
-
-bool SaveDataHandler::LoadBoolData(const std::string &key, bool defaultValue)
-{
-    cJSON *item = cJSON_GetObjectItem(m_root, key.c_str());
-    if (cJSON_IsBool(item))
-        return cJSON_IsTrue(item);
-
-    SaveData(key, defaultValue);
-    return defaultValue;
-}
-
 #pragma endregion
 
 #pragma region Getters / Setters
 #pragma endregion
+
+
+void SaveDataHandler::load_counter() {
+    FILE *f = fopen("/persistent/counter.txt", "r");
+    if (f) {
+        fscanf(f, "%d", &m_count);
+        fclose(f);
+    } else {
+        m_count = 0;
+    }
+}
+
+void SaveDataHandler::save_counter() {
+    FILE *f = fopen("/persistent/counter.txt", "w");
+    if (f) {
+        fprintf(f, "%d", m_count);
+        fclose(f);
+    }
+}
+
+void SaveDataHandler::persist_counter() {
+    #ifdef __EMSCRIPTEN__
+    EM_ASM(
+        FS.syncfs(false, function(err) {
+            if (err) console.error("Sync error:", err);
+        });
+    );
+    #endif
+}

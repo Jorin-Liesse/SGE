@@ -7,6 +7,9 @@
 #include <fstream>
 #include <string>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -24,21 +27,16 @@ namespace sge
         void CleanUp();
         void Init();
 
-        void SaveData(const std::string& key, const std::string& value);
-        void SaveData(const std::string& key, int value);
-        void SaveData(const std::string& key, float value);
-        void SaveData(const std::string& key, bool value);
+        int m_count;
 
-        std::string LoadStringData(const std::string& key, std::string defaultValue = "");
-        int LoadIntData(const std::string& key, int defaultValue = 0);
-        float LoadFloatData(const std::string& key, float defaultValue = 0.0f);
-        bool LoadBoolData(const std::string& key, bool defaultValue = false);
+        void load_counter();
+        void save_counter();
+        void persist_counter();
 
     private:
         std::string m_path;
-        cJSON* m_root;
-
-        void Commit();
-        void LoadFromDisk();
+        cJSON* m_root;   
     };
 }
+
+
