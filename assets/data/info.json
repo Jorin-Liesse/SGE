@@ -12,6 +12,13 @@
             "website": "https://www.ravbug.com/",
             "license": "CC0 1.0 Universal",
             "link": "https://github.com/Ravbug/sdl3-sample"
+        },
+        {
+            "name": "cJSON",
+            "author": "Dave Gamble",
+            "website": "https://github.com/DaveGamble",
+            "license": "MIT",
+            "link": "https://github.com/DaveGamble/cJSON"
         }
     ],
 

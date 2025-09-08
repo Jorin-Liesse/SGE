@@ -58,8 +58,8 @@ bool Game::Init()
 
     TestInit();
 
-    SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN); // SDL_WINDOW_BORDERLESS // SDL_WINDOW_FULLSCREEN //
-    SDL_SetRenderVSync(m_renderer, -1);                       // enable vysnc
+    // SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN); // SDL_WINDOW_BORDERLESS // SDL_WINDOW_FULLSCREEN //
+    // SDL_SetRenderVSync(m_renderer, -1);                       // enable vysnc
 
     return true;
 }
@@ -214,7 +214,37 @@ void Game::TestInit()
     auto musicPath = basePath / "assets/audio/the_entertainer.ogg";
     auto music = MIX_LoadAudio(m_mixer, musicPath.string().c_str(), false);
     MIX_SetTrackAudio(m_track, music);
-    MIX_PlayTrack(m_track, NULL);
+    MIX_PlayTrack(m_track, 0);
+
+    int count_i = SaveDataHandler::GetInstance().LoadIntData("test-count", 0);
+    count_i++;
+    SaveDataHandler::GetInstance().SaveData("test-count", count_i);
+
+    float count_f = SaveDataHandler::GetInstance().LoadFloatData("test-count-f", 0.0f);
+    count_f += 0.1f;
+    SaveDataHandler::GetInstance().SaveData("test-count-f", count_f);
+
+    bool count_b = SaveDataHandler::GetInstance().LoadBoolData("test-count-b", false);
+    count_b = not count_b;
+    SaveDataHandler::GetInstance().SaveData("test-count-b", count_b);
+
+    string count_s = SaveDataHandler::GetInstance().LoadStringData("test-count-s", "a");
+    count_s += "a";
+    SaveDataHandler::GetInstance().SaveData("test-count-s", count_s);
+
+#ifdef __EMSCRIPTEN__
+    printf("Integer: %d\n", count_i);
+    printf("Float: %f\n", count_f);
+    printf("Boolean: %d\n", count_b);
+    printf("String: %s\n", count_s.c_str());
+#else
+    string msg = "Integer: " + to_string(count_i) + "\n";
+    msg += "Float: " + to_string(count_f) + "\n";
+    msg += "Boolean: " + to_string(count_b) + "\n";
+    msg += "String: " + count_s + "\n";
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Counter",
+                             msg.c_str(), nullptr);
+#endif
 }
 
 void Game::TestUpdate()

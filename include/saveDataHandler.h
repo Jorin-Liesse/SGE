@@ -1,5 +1,6 @@
 #pragma once
 #include "patterns/singleton/singleton.h"
+#include "assetsHandler.h"
 #include "game.h"
 #include "cJSON.h"
 
@@ -7,11 +8,9 @@
 #include <fstream>
 #include <string>
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
+#include <emscripten/val.h>
 #endif
 
 namespace sge
@@ -27,17 +26,23 @@ namespace sge
         void CleanUp();
         void Init();
 
-        int m_count;
+        bool IsReady();
 
-        void load_counter();
-        void save_counter();
-        void persist_counter();
-        void after_sync();
+        void LoadFromDisk();
+        void SaveToDisk();
+
+        void SaveData(const std::string& key, const std::string& value);
+        void SaveData(const std::string& key, int value);
+        void SaveData(const std::string& key, float value);
+        void SaveData(const std::string& key, bool value);
+
+        std::string LoadStringData(const std::string& key, std::string defaultValue = "");
+        int LoadIntData(const std::string& key, int defaultValue = 0);
+        float LoadFloatData(const std::string& key, float defaultValue = 0.0f);
+        bool LoadBoolData(const std::string& key, bool defaultValue = false);
 
     private:
         std::string m_path;
-        cJSON* m_root;   
+        cJSON* m_root;
     };
 }
-
-

@@ -147,7 +147,8 @@ if(EMSCRIPTEN)
 
     target_link_options(${EXECUTABLE_NAME} PRIVATE
         -lidbfs.js
-        -s FORCE_FILESYSTEM=1
+        -sFORCE_FILESYSTEM=1
+        -sASYNCIFY
     )
 endif()
 

@@ -86,4 +86,9 @@ echo "Web build complete ✅. Ready in '$BUILD_DIR/$CONFIG/'"
 # ---- START LOCAL SERVER ----
 echo "Starting local web server at http://localhost:8000"
 cd "${BUILD_DIR}/${CONFIG}"
-python -m http.server 8000
+
+python -m http.server 8000 &
+
+cmd.exe /c start http://localhost:8000
+
+wait
