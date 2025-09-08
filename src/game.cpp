@@ -119,10 +119,18 @@ void Game::Render()
 
 void Game::ShowMessage(const string &title, const string &message)
 {
-    if (not message.empty())
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), message.c_str(), nullptr);
+#ifdef __EMSCRIPTEN__
+    if (message.empty())
+        printf("SDL Error: %s\n", SDL_GetError());
     else
+        printf("%s: %s\n", title.c_str(), message.c_str());
+#else
+    if (message.empty())
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), SDL_GetError(), nullptr);
+    else
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), message.c_str(), nullptr);
+
+#endif
 }
 
 #pragma endregion
@@ -216,9 +224,9 @@ void Game::TestInit()
     MIX_SetTrackAudio(m_track, music);
     MIX_PlayTrack(m_track, 0);
 
-    int count_i = SaveDataHandler::GetInstance().LoadIntData("test-count", 0);
+    int count_i = SaveDataHandler::GetInstance().LoadIntData("test-count-i", 0);
     count_i++;
-    SaveDataHandler::GetInstance().SaveData("test-count", count_i);
+    SaveDataHandler::GetInstance().SaveData("test-count-i", count_i);
 
     float count_f = SaveDataHandler::GetInstance().LoadFloatData("test-count-f", 0.0f);
     count_f += 0.1f;
@@ -232,19 +240,24 @@ void Game::TestInit()
     count_s += "a";
     SaveDataHandler::GetInstance().SaveData("test-count-s", count_s);
 
-#ifdef __EMSCRIPTEN__
-    printf("Integer: %d\n", count_i);
-    printf("Float: %f\n", count_f);
-    printf("Boolean: %d\n", count_b);
-    printf("String: %s\n", count_s.c_str());
-#else
-    string msg = "Integer: " + to_string(count_i) + "\n";
-    msg += "Float: " + to_string(count_f) + "\n";
-    msg += "Boolean: " + to_string(count_b) + "\n";
-    msg += "String: " + count_s + "\n";
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Counter",
-                             msg.c_str(), nullptr);
-#endif
+    ShowMessage("Integer", to_string(count_i));
+    ShowMessage("Float", to_string(count_f));
+    ShowMessage("Boolean", count_b ? "true" : "false");
+    ShowMessage("String", count_s);
+
+    // #ifdef __EMSCRIPTEN__
+    //     printf("Integer: %d\n", count_i);
+    //     printf("Float: %f\n", count_f);
+    //     printf("Boolean: %d\n", count_b);
+    //     printf("String: %s\n", count_s.c_str());
+    // #else
+    //     string msg = "Integer: " + to_string(count_i) + "\n";
+    //     msg += "Float: " + to_string(count_f) + "\n";
+    //     msg += "Boolean: " + to_string(count_b) + "\n";
+    //     msg += "String: " + count_s + "\n";
+    //     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Counter",
+    //                              msg.c_str(), nullptr);
+    // #endif
 }
 
 void Game::TestUpdate()
