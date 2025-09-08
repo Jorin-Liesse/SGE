@@ -77,8 +77,8 @@ bool Game::Init()
 
     InitSaveFolderWeb();
 
-    SaveDataWeb("playerName", "Alice");
-    SaveDataWeb("level", "5");
+    // SaveDataWeb("playerName", "Alice");
+    // SaveDataWeb("level", "5");
 
     // Load data
     std::string playerName = LoadDataWeb("playerName", "Unknown");
