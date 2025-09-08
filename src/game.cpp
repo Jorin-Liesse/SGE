@@ -84,7 +84,11 @@ bool Game::Init()
     std::string playerName = LoadDataWeb("playerName", "Unknown");
     std::string level = LoadDataWeb("level", "0");
 
-    ShowMessage("Save Data", "Player Name: " + playerName + "\nLevel: " + level);
+    int levelInt = std::stoi(level);
+    levelInt++;
+    SaveDataWeb("level", std::to_string(levelInt));
+
+    ShowMessage("Save Data", "Player Name: " + playerName + "\nLevel: " + std::to_string(levelInt));
 
     
     AssetsHandler::GetInstance().UnUsedJson(infoDataId);
