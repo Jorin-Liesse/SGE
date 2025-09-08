@@ -32,6 +32,7 @@ namespace sge
         void load_counter();
         void save_counter();
         void persist_counter();
+        void after_sync();
 
     private:
         std::string m_path;
