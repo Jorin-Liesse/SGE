@@ -2,6 +2,7 @@
 #include "patterns/singleton/singleton.h"
 #include "assetsHandler.h"
 #include "saveDataHandler.h"
+#include "FPSHandler.h"
 #include "cJSON.h"
 
 #include <SDL3/SDL.h>
@@ -9,6 +10,7 @@
 #include <SDL3_mixer/SDL_mixer.h>
 #include <SDL3_image/SDL_image.h>
 #include <string>
+#include <format>
 
 #include <filesystem>
 
@@ -28,7 +30,7 @@ namespace sge
         void Event();
 
         void Render();
-        void Update();
+        void Execute();
 
         SDL_Window *GetWindow();
         void SetWindow(SDL_Window *window);
@@ -54,17 +56,18 @@ namespace sge
         SDL_AppResult m_appResult;
         MIX_Mixer *m_mixer;
 
-        // int m_width, m_height;
-        // bool m_vsync;
-        // int m_fps;
-        // float m_audioVolume, m_musicVolume, m_soundVolume;
-        // std::string m_windowMode;
+        int m_width, m_height;
+        bool m_vsync;
+        int m_fps;
+        float m_audioVolume, m_musicVolume, m_soundVolume;
+        std::string m_windowMode;
 
         //
-
-        SDL_Texture *m_messageTex, *m_imageTex;
-        SDL_FRect m_messageDest;
+        SDL_Texture *m_messageTex, *m_imageTex, *m_fpsTex;
+        SDL_FRect m_messageDest, m_fpsDest;
         MIX_Track *m_track;
+
+        int m_fontId;
 
         float m_time;
         float m_red;
@@ -75,15 +78,13 @@ namespace sge
         void TestUpdate();
         void TestRender();
 
-        bool SaveData(const std::string &filename, const std::string &key, const std::string &value);
-        std::string LoadData(const std::string &filename, const std::string &key, const std::string &defaultValue = "");
-
-        void InitSaveFolderWeb();
-        bool SaveDataWeb(const std::string &key, const std::string &value);
-        std::string LoadDataWeb(const std::string &key, const std::string &defaultValue = "");
-
-        const std::string SAVE_FOLDER = "/MyCompany/MyGame";
-        const std::string SAVE_FILE = SAVE_FOLDER + "/saveData.json";
+        void TestTextInit();
+        void TestAudioInit();
+        void TestImageInit();
+        void TestSaveDataInit();
+        
+        void TestFPSInit();
+        void TestFPSUpdate();
 
         //
     };

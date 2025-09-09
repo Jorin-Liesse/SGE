@@ -71,7 +71,11 @@ void SaveDataHandler::LoadFromDisk()
 {
     FILE *file = fopen(m_path.c_str(), "r");
     if (!file)
+    {
+        m_root = cJSON_CreateObject();
+        SaveToDisk();
         return;
+    }
 
     fseek(file, 0, SEEK_END);
     long size = ftell(file);
@@ -86,7 +90,10 @@ void SaveDataHandler::LoadFromDisk()
     delete[] data;
 
     if (!m_root)
+    {
         m_root = cJSON_CreateObject();
+        SaveToDisk();
+    }
 }
 
 void SaveDataHandler::SaveToDisk()

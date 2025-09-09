@@ -45,7 +45,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    Game::GetInstance().Update();
+    Game::GetInstance().Execute();
     Game::GetInstance().Render();
     return Game::GetInstance().GetAppResult();
 }
