@@ -20,6 +20,20 @@ FPSHandler::~FPSHandler()
 
 void FPSHandler::Init()
 {
+#ifdef __EMSCRIPTEN__
+    m_previousTime = emscripten_get_now();
+    m_lastTime = emscripten_get_now();
+#else
+    m_previousTime = SDL_GetPerformanceCounter();
+    m_lastTime = SDL_GetPerformanceCounter();
+#endif
+    m_previousTime = SDL_GetPerformanceCounter();
+    m_lastTime = SDL_GetPerformanceCounter();
+    m_frames = 0;
+
+    m_currentFPS = 0.0f;
+    m_deltaTime = 0.0f;
+
     int infoDataId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
     cJSON *infoJson = AssetsHandler::GetInstance().GetJson(infoDataId);
 
@@ -33,8 +47,6 @@ void FPSHandler::Init()
 
     ChangeFps();
     ChangeVsync();
-
-    m_previousTime = SDL_GetTicks();
 }
 
 void FPSHandler::CleanUp()
@@ -47,19 +59,42 @@ void FPSHandler::CleanUp()
 
 void FPSHandler::Execute()
 {
-    m_currentTime = SDL_GetTicks();
-    m_deltaTime = (m_currentTime - m_previousTime) / 1000.0f;
-    m_previousTime = m_currentTime;
+#ifdef __EMSCRIPTEN__
+    double frameStart = emscripten_get_now();
+    m_deltaTime = (frameStart - m_previousTime) / 1000.0f;
+    m_previousTime = frameStart;
 
-    if (m_fps <= 0)
-        return;
+    double elapsed = (frameStart - m_lastTime) / 1000.0f;
+#else
+    double frameStart = SDL_GetPerformanceCounter();
+    m_deltaTime = (float)(frameStart - m_previousTime) / SDL_GetPerformanceFrequency();
+    m_previousTime = frameStart;
 
-    Uint32 frameTime = SDL_GetTicks() - m_currentTime;
-    Uint32 targetFrameTime = 1000u / static_cast<Uint32>(m_fps);
-    if (frameTime < targetFrameTime)
+    double elapsed = (frameStart - m_lastTime) / SDL_GetPerformanceFrequency();
+#endif
+
+    m_frames++;
+
+    if (elapsed >= 1.0 || elapsed < 0)
     {
-        SDL_Delay(targetFrameTime - frameTime);
+        m_currentFPS = m_frames / elapsed;
+        m_frames = 0;
+        m_lastTime = frameStart;
     }
+
+#ifndef __EMSCRIPTEN__
+
+    if (m_fps > 0)
+    {
+        double frameTimeMs = (double)(SDL_GetPerformanceCounter() - frameStart) / SDL_GetPerformanceFrequency() * 1000.0;
+        double targetFrameTime = 1000.0 / static_cast<double>(m_fps);
+
+        if (frameTimeMs < targetFrameTime)
+        {
+            SDL_Delay(static_cast<Uint32>(targetFrameTime - frameTimeMs));
+        }
+    }
+#endif
 }
 
 #pragma endregion
@@ -107,6 +142,11 @@ void FPSHandler::SetFps(int fps)
         return;
     m_fps = fps;
     ChangeFps();
+}
+
+float FPSHandler::GetCurrentFPS()
+{
+    return m_currentFPS;
 }
 
 float FPSHandler::GetDeltaTime()

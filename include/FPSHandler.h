@@ -25,15 +25,18 @@ namespace sge
         int GetFps();
         void SetFps(int fps);
 
+        float GetCurrentFPS();
+
         float GetDeltaTime();
 
     private:
         bool m_vsync;
         int m_fps;
         float m_deltaTime;
-
-        Uint32 m_previousTime;
-        Uint32 m_currentTime;
+        float m_currentFPS;
+        double m_previousTime;
+        double m_lastTime;
+        int m_frames;
 
         void ChangeFps();
         void ChangeVsync();

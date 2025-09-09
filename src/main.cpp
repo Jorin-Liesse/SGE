@@ -6,57 +6,30 @@ using namespace sge;
 
 #pragma endregion
 
-#pragma region Engine Methods
-
-SDL_AppResult SDL_Fail()
+int main(int argc, char *argv[])
 {
-    Game::GetInstance().ShowMessage("Error", SDL_GetError());
-    return SDL_APP_FAILURE;
-}
-
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
-{
-#if __ANDROID__
-    SDL_SetHint(SDL_HINT_ANDROID_BLOCK_ON_PAUSE, "1");
-    SDL_SetHint(SDL_HINT_ANDROID_TRAP_BACK_BUTTON, "1");
-#endif
-
-    if (not SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
-        return SDL_Fail();
-
-    if (not TTF_Init())
-        return SDL_Fail();
-
-    if (not MIX_Init())
-        return SDL_Fail();
-
     Game::GetInstance().Init();
 
-    return SDL_APP_CONTINUE;
+#ifdef __EMSCRIPTEN__
+emscripten_set_main_loop_arg(
+    [](void* arg) { static_cast<Game*>(arg)->Run(); },
+    &Game::GetInstance(),
+    1, // use requestAnimationFrame
+    1);
+emscripten_set_main_loop_timing(EM_TIMING_SETTIMEOUT, 1000 / 30);
+#else
+    while (Game::GetInstance().GetRunning())
+        Game::GetInstance().Run();
+
+#endif
+
+    return 0;
 }
 
-SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+#ifdef _WIN32
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                     LPSTR lpCmdLine, int nCmdShow)
 {
-    Game::GetInstance().SetEvent(event);
-    Game::GetInstance().Event();
-
-    return SDL_APP_CONTINUE;
+    return main(__argc, __argv);
 }
-
-SDL_AppResult SDL_AppIterate(void *appstate)
-{
-    Game::GetInstance().Execute();
-    Game::GetInstance().Render();
-    return Game::GetInstance().GetAppResult();
-}
-
-void SDL_AppQuit(void *appstate, SDL_AppResult result)
-{
-    Game::GetInstance().Cleanup();
-
-    TTF_Quit();
-    MIX_Quit();
-    SDL_Quit();
-}
-
-#pragma endregion
+#endif
