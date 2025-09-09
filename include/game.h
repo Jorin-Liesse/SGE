@@ -79,6 +79,7 @@ namespace sge
         void TestInit();
         void TestUpdate();
         void TestRender();
+        void TestEvent(SDL_Event *event);
 
         void TestTextInit();
         void TestAudioInit();

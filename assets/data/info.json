@@ -29,7 +29,7 @@
     "default-height": 1080,
     "default-window-mode": "fullscreen",
 
-    "default-fps": 0,
+    "default-fps": 30,
     "default-vsync": true,
 
     "default-audio-volume": 1,

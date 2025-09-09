@@ -75,13 +75,7 @@ bool Game::Init()
     // else if (m_windowMode == "fullscreen")
     //     SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
 
-    // if (m_vsync)
-    //     SDL_SetRenderVSync(m_renderer, -1); // enable vsync
-    // else
-    //     SDL_SetRenderVSync(m_renderer, 0); // disable vsync
-
     // SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN); // SDL_WINDOW_BORDERLESS // SDL_WINDOW_FULLSCREEN //
-    // SDL_SetRenderVSync(m_renderer, -1);                       // enable vsync
 
     return true;
 }
@@ -109,12 +103,25 @@ void Game::Event()
     if (not m_event)
         return;
 
+    TestEvent(m_event);
+
+    if (m_event->type == SDL_EVENT_KEY_DOWN)
+    {
+        if (m_event->key.key == SDLK_ESCAPE)
+            m_appResult = SDL_APP_SUCCESS;
+    }
+
     if (m_event->type == SDL_EVENT_QUIT)
         m_appResult = SDL_APP_SUCCESS;
 }
 
 void Game::Execute()
 {
+#ifdef __EMSCRIPTEN__
+    if (not FPSHandler::GetInstance().CanContinue())
+        return;
+#endif
+
     FPSHandler::GetInstance().Execute();
     TestUpdate();
 }
@@ -241,6 +248,54 @@ void Game::TestRender()
     SDL_RenderTexture(m_renderer, m_messageTex, NULL, &m_messageDest);
 
     SDL_RenderTexture(m_renderer, m_fpsTex, NULL, &m_fpsDest);
+}
+
+void Game::TestEvent(SDL_Event *event)
+{
+    if (m_event->type == SDL_EVENT_KEY_DOWN)
+    {
+        if (m_event->key.key == SDLK_KP_0)
+        {
+            int jsonId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
+            cJSON *infoJson = AssetsHandler::GetInstance().GetJson(jsonId);
+
+            string title = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "project"));
+            string iconPath = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "icon-path"));
+
+            int defaultWidth = cJSON_GetObjectItem(infoJson, "default-width")->valueint;
+            int defaultHeight = cJSON_GetObjectItem(infoJson, "default-height")->valueint;
+            string defaultWindowMode = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "default-window-mode"));
+
+            float defaultAudioVolume = float(cJSON_GetObjectItem(infoJson, "default-audio-volume")->valuedouble);
+            float defaultMusicVolume = float(cJSON_GetObjectItem(infoJson, "default-music-volume")->valuedouble);
+            float defaultSoundVolume = float(cJSON_GetObjectItem(infoJson, "default-sound-volume")->valuedouble);
+
+            int defaultFps = cJSON_GetObjectItem(infoJson, "default-fps")->valueint;
+            bool defaultVsync = cJSON_GetObjectItem(infoJson, "default-vsync")->valueint;
+
+            ShowMessage("Info Json",
+                        format("Project: {}\nIcon Path: {}\nDefault Width: {}\nDefault Height: {}\nDefault Window Mode: {}\nDefault Audio Volume: {:.2f}\nDefault Music Volume: {:.2f}\nDefault Sound Volume: {:.2f}\nDefault FPS: {}\nDefault VSync: {}",
+                               title, iconPath, defaultWidth, defaultHeight, defaultWindowMode, defaultAudioVolume, defaultMusicVolume, defaultSoundVolume, defaultFps, defaultVsync ? "true" : "false"));
+            AssetsHandler::GetInstance().UnUsedJson(jsonId);
+        }
+
+        else if (m_event->key.key == SDLK_KP_1)
+        {
+            m_width = SaveDataHandler::GetInstance().LoadIntData("width");
+            m_height = SaveDataHandler::GetInstance().LoadIntData("height");
+            m_windowMode = SaveDataHandler::GetInstance().LoadStringData("window-mode");
+
+            m_fps = SaveDataHandler::GetInstance().LoadIntData("fps");
+            m_vsync = SaveDataHandler::GetInstance().LoadBoolData("vsync");
+
+            m_audioVolume = SaveDataHandler::GetInstance().LoadFloatData("audio-volume");
+            m_musicVolume = SaveDataHandler::GetInstance().LoadFloatData("music-volume");
+            m_soundVolume = SaveDataHandler::GetInstance().LoadFloatData("sound-volume");
+
+            ShowMessage("Load Settings", format("Width: {}\nHeight: {}\nWindow Mode: {}\nFPS: {}\nVSync: {}\nAudio Volume: {:.2f}\nMusic Volume: {:.2f}\nSound Volume: {:.2f}",
+                                                m_width, m_height, m_windowMode, m_fps, m_vsync ? "true" : "false", m_audioVolume, m_musicVolume, m_soundVolume));
+        }
+    }
 }
 
 void Game::TestTextInit()

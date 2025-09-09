@@ -18,6 +18,10 @@ namespace sge
         void Init();
 
         void Execute();
+        
+#ifdef __EMSCRIPTEN__
+        bool CanContinue();
+#endif
 
         bool GetVsync();
         void SetVsync(bool vsync);

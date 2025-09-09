@@ -71,18 +71,6 @@ void FPSHandler::Execute()
     m_previousTime = frameStart;
 
     double elapsed = (frameStart - m_lastTime) / SDL_GetPerformanceFrequency();
-#endif
-
-    m_frames++;
-
-    if (elapsed >= 1.0 || elapsed < 0)
-    {
-        m_currentFPS = m_frames / elapsed;
-        m_frames = 0;
-        m_lastTime = frameStart;
-    }
-
-#ifndef __EMSCRIPTEN__
 
     if (m_fps > 0)
     {
@@ -95,6 +83,15 @@ void FPSHandler::Execute()
         }
     }
 #endif
+
+    m_frames++;
+
+    if (elapsed >= 1.0 || elapsed < 0)
+    {
+        m_currentFPS = m_frames / elapsed;
+        m_frames = 0;
+        m_lastTime = frameStart;
+    }
 }
 
 #pragma endregion
@@ -116,6 +113,20 @@ void FPSHandler::ChangeVsync()
 #pragma endregion
 
 #pragma region Public Methods
+
+#ifdef __EMSCRIPTEN__
+bool FPSHandler::CanContinue()
+{
+    double now = emscripten_get_now() / 1000.0f;
+    double last = m_previousTime / 1000.0f;
+
+    if ((now - last) >= (1.0f / m_fps) || (now - last) <= 0 || m_fps <= 0)
+        return true;
+
+    return false;
+}
+#endif
+
 #pragma endregion
 
 #pragma region Getters / Setters
