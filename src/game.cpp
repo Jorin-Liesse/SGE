@@ -21,38 +21,11 @@ Game::~Game()
 
 bool Game::Init()
 {
-    m_running = true;
     m_event = nullptr;
     m_window = nullptr;
     m_renderer = nullptr;
     m_appResult = SDL_APP_CONTINUE;
     m_mixer = nullptr;
-
-#if __ANDROID__
-    SDL_SetHint(SDL_HINT_ANDROID_BLOCK_ON_PAUSE, "1");
-    SDL_SetHint(SDL_HINT_ANDROID_TRAP_BACK_BUTTON, "1");
-#endif
-
-    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
-    {
-        Game::GetInstance().ShowMessage("Error", SDL_GetError());
-        return -1;
-    }
-
-    if (!TTF_Init())
-    {
-        Game::GetInstance().ShowMessage("Error", SDL_GetError());
-        SDL_Quit();
-        return -1;
-    }
-
-    if (!MIX_Init())
-    {
-        Game::GetInstance().ShowMessage("Error", SDL_GetError());
-        TTF_Quit();
-        SDL_Quit();
-        return -1;
-    }
 
     m_window = SDL_CreateWindow("game", 500, 500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     m_renderer = SDL_CreateRenderer(m_window, NULL);
@@ -125,54 +98,19 @@ void Game::Cleanup()
 
     MIX_StopAllTracks(m_mixer, 0);
     MIX_DestroyMixer(m_mixer);
-
-    MIX_Quit();
-    TTF_Quit();
-    SDL_Quit();
-
-#ifdef __EMSCRIPTEN__
-    emscripten_cancel_main_loop();
-#endif
 }
 
 #pragma endregion
 
 #pragma region Engine Methods
 
-void Game::Run()
-{
-    // --- Event handling ---
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        Game::GetInstance().SetEvent(&event);
-        Game::GetInstance().Event();
-
-        if (event.type == SDL_EVENT_QUIT)
-        {
-
-            m_running = false;
-        }
-    }
-
-    // --- Update ---
-    Game::GetInstance().Execute();
-
-    // --- Render ---
-    Game::GetInstance().Render();
-
-    // --- Check exit condition ---
-    if (Game::GetInstance().GetAppResult() != SDL_APP_CONTINUE)
-        m_running = false;
-
-    if (not m_running)
-        Game::GetInstance().Cleanup();
-}
-
 void Game::Event()
 {
     if (not m_event)
         return;
+
+    if (m_event->type == SDL_EVENT_QUIT)
+        m_appResult = SDL_APP_SUCCESS;
 }
 
 void Game::Execute()
@@ -217,11 +155,6 @@ void Game::ShowMessage(const string &title, const string &message)
 #pragma endregion
 
 #pragma region Getters / Setters
-
-bool Game::GetRunning()
-{
-    return m_running;
-}
 
 SDL_Window *Game::GetWindow()
 {

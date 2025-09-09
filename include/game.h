@@ -29,14 +29,10 @@ namespace sge
         bool Init();
         void Cleanup();
 
-        void Run();
-
         void Event();
 
         void Render();
         void Execute();
-
-        bool GetRunning();
 
         SDL_Window *GetWindow();
         void SetWindow(SDL_Window *window);
@@ -56,8 +52,6 @@ namespace sge
         void ShowMessage(const std::string &title, const std::string &message);
 
     private:
-        bool m_running;
-
         SDL_Event *m_event;
         SDL_Window *m_window;
         SDL_Renderer *m_renderer;
