@@ -6,9 +6,9 @@
 
 namespace sge
 {
-    class FPSHandler : public sge::patterns::singleton::Singleton<FPSHandler>
+    class FPSHandler : public patterns::Singleton<FPSHandler>
     {
-        friend class sge::patterns::singleton::Singleton<FPSHandler>;
+        friend class patterns::Singleton<FPSHandler>;
 
     public:
         FPSHandler() = default;

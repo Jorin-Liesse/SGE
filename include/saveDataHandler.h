@@ -15,9 +15,9 @@
 
 namespace sge
 {
-    class SaveDataHandler : public sge::patterns::singleton::Singleton<SaveDataHandler>
+    class SaveDataHandler : public patterns::Singleton<SaveDataHandler>
     {
-        friend class sge::patterns::singleton::Singleton<SaveDataHandler>;
+        friend class patterns::Singleton<SaveDataHandler>;
 
     public:
         SaveDataHandler() = default;

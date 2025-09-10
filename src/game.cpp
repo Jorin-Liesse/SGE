@@ -33,6 +33,7 @@ bool Game::Init()
     AssetsHandler::GetInstance().Init();
     SaveDataHandler::GetInstance().Init();
     FPSHandler::GetInstance().Init();
+    StatusHandler::GetInstance().Init();
 
     int infoDataId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
     cJSON *infoJson = AssetsHandler::GetInstance().GetJson(infoDataId);
@@ -84,6 +85,8 @@ void Game::Cleanup()
 {
     SaveDataHandler::GetInstance().CleanUp();
     AssetsHandler::GetInstance().CleanUp();
+    FPSHandler::GetInstance().CleanUp();
+    StatusHandler::GetInstance().Cleanup();
 
     if (m_renderer)
         SDL_DestroyRenderer(m_renderer);
@@ -102,6 +105,8 @@ void Game::Event()
 {
     if (not m_event)
         return;
+
+    StatusHandler::GetInstance().HandleEvents(m_event);
 
     TestEvent(m_event);
 
@@ -227,6 +232,7 @@ void Game::TestInit()
     TestImageInit();
     TestSaveDataInit();
     TestFPSInit();
+    TestStatusInit();
 }
 
 void Game::TestUpdate()
@@ -361,6 +367,21 @@ void Game::TestSaveDataInit()
     ShowMessage("Float", to_string(count_f));
     ShowMessage("Boolean", count_b ? "true" : "false");
     ShowMessage("String", count_s);
+}
+
+void Game::TestStatusInit()
+{
+    StatusHandler::GetInstance().OnVisibilityChange.subscribe([](bool visibility) {
+        printf("Visibility changed: %s\n", visibility ? "true" : "false");
+    });
+
+    StatusHandler::GetInstance().OnFocusChange.subscribe([](bool focused) {
+        printf("Focus changed: %s\n", focused ? "true" : "false");
+    });
+
+    StatusHandler::GetInstance().OnWasHiddenChange.subscribe([](bool wasHidden) {
+        printf("WasHidden changed: %s\n", wasHidden ? "true" : "false");
+    });
 }
 
 void Game::TestFPSInit()

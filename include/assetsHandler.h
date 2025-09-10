@@ -13,9 +13,9 @@
 
 namespace sge
 {
-    class AssetsHandler : public sge::patterns::singleton::Singleton<AssetsHandler>
+    class AssetsHandler : public patterns::Singleton<AssetsHandler>
     {
-        friend class sge::patterns::singleton::Singleton<AssetsHandler>;
+        friend class patterns::Singleton<AssetsHandler>;
 
     public:
         AssetsHandler() = default;

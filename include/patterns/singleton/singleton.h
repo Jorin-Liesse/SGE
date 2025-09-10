@@ -1,6 +1,6 @@
 #pragma once
 
-namespace sge::patterns::singleton
+namespace patterns
 {
     template <typename T>
     class Singleton

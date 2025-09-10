@@ -3,6 +3,7 @@
 #include "assetsHandler.h"
 #include "saveDataHandler.h"
 #include "FPSHandler.h"
+#include "statusHandler.h"
 #include "cJSON.h"
 
 #include <SDL3/SDL.h>
@@ -18,9 +19,9 @@
 
 namespace sge
 {
-    class Game : public sge::patterns::singleton::Singleton<Game>
+    class Game : public patterns::Singleton<Game>
     {
-        friend class sge::patterns::singleton::Singleton<Game>;
+        friend class patterns::Singleton<Game>;
 
     public:
         Game() = default;
@@ -85,7 +86,8 @@ namespace sge
         void TestAudioInit();
         void TestImageInit();
         void TestSaveDataInit();
-        
+        void TestStatusInit();
+
         void TestFPSInit();
         void TestFPSUpdate();
 
