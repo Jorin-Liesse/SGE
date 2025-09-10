@@ -26,12 +26,8 @@ void AssetsHandler::Init()
     m_nextSoundEffectID = 0;
     m_nextJsonID = 0;
 
-// #if __ANDROID__
-//     m_basePath = "";
-// #else
     auto basePathPtr = SDL_GetBasePath();
     m_basePath = basePathPtr ? basePathPtr : "";
-// #endif
 }
 
 void AssetsHandler::CleanUp()
@@ -147,32 +143,82 @@ void AssetsHandler::LoadSoundEffect(const string &filePath)
     m_soundEffects[filePath] = {chunk, {}};
 }
 
-void AssetsHandler::LoadJson(const string &filePath)
+// void AssetsHandler::LoadJson(const string &filePath)
+// {
+
+//     if (m_jsonData.find(filePath) != m_jsonData.end())
+//         return;
+
+//     FILE *file = fopen((m_basePath + filePath).c_str(), "rb");
+//     if (!file)
+//     {
+//         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "JSON Load Error", ("Failed to open JSON: " + filePath).c_str(), nullptr);
+//         return;
+//     }
+
+//     fseek(file, 0, SEEK_END);
+//     long size = ftell(file);
+//     fseek(file, 0, SEEK_SET);
+//     char *data = new char[size + 1];
+//     fread(data, 1, size, file);
+//     data[size] = '\0';
+//     fclose(file);
+
+//     cJSON *json = cJSON_Parse(data);
+//     delete[] data;
+
+//     if (!json)
+//     {
+//         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "JSON Load Error", ("Failed to parse JSON: " + filePath).c_str(), nullptr);
+//         return;
+//     }
+
+//     m_jsonData[filePath] = {json, {}};
+// }
+
+void AssetsHandler::LoadJson(const std::string &filePath)
 {
     if (m_jsonData.find(filePath) != m_jsonData.end())
         return;
 
-    FILE *file = fopen((m_basePath + filePath).c_str(), "rb");
-    if (!file)
+    std::string fullPath = m_basePath + filePath;
+    SDL_IOStream *stream = SDL_IOFromFile(fullPath.c_str(), "rb");
+    if (!stream)
     {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "JSON Load Error", ("Failed to open JSON: " + filePath).c_str(), nullptr);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "JSON Load Error",
+                                 ("Failed to open JSON: " + filePath).c_str(), nullptr);
         return;
     }
 
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    size_t size = SDL_GetIOSize(stream);
+    if (size == 0)
+    {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "JSON Load Error",
+                                 ("Empty or unreadable file: " + filePath).c_str(), nullptr);
+        SDL_CloseIO(stream);
+        return;
+    }
+
     char *data = new char[size + 1];
-    fread(data, 1, size, file);
+    size_t bytesRead = SDL_ReadIO(stream, data, size);
     data[size] = '\0';
-    fclose(file);
+    SDL_CloseIO(stream);
+
+    if (bytesRead != size)
+    {
+        delete[] data;
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "JSON Load Error",
+                                 ("Failed to read complete JSON file: " + filePath).c_str(), nullptr);
+        return;
+    }
 
     cJSON *json = cJSON_Parse(data);
     delete[] data;
 
     if (!json)
     {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "JSON Load Error", ("Failed to parse JSON: " + filePath).c_str(), nullptr);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "JSON Load Error",
+                                 ("Failed to parse JSON: " + filePath).c_str(), nullptr);
         return;
     }
 

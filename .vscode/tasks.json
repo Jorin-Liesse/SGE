@@ -22,6 +22,17 @@
                 "isDefault": true
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Build (Android)",
+            "type": "shell",
+            "command": "bash",
+            "args": ["./config/and-build.sh"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
         }
     ]
 }
