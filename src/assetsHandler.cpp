@@ -26,12 +26,12 @@ void AssetsHandler::Init()
     m_nextSoundEffectID = 0;
     m_nextJsonID = 0;
 
-#if __ANDROID__
-    m_basePath = "";
-#else
+// #if __ANDROID__
+//     m_basePath = "";
+// #else
     auto basePathPtr = SDL_GetBasePath();
     m_basePath = basePathPtr ? basePathPtr : "";
-#endif
+// #endif
 }
 
 void AssetsHandler::CleanUp()
