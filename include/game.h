@@ -12,6 +12,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <string>
 #include <format>
+#include <cmath>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
