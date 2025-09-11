@@ -51,18 +51,32 @@ void ResolutionHandler::Cleanup()
 void ResolutionHandler::ChangedResolution()
 {
     SDL_SetWindowSize(Game::GetInstance().GetWindow(), m_width, m_height);
+
+    SaveDataHandler::GetInstance().SaveData("width", m_width);
+    SaveDataHandler::GetInstance().SaveData("height", m_height);
 }
 
 void ResolutionHandler::ChangedWindowMode()
 {
     if (m_windowMode == "windowed")
         SDL_SetWindowSize(Game::GetInstance().GetWindow(), m_width, m_height);
-    else if (m_windowMode == "borderless")
-        SDL_SetWindowFullscreen(Game::GetInstance().GetWindow(), SDL_WINDOW_BORDERLESS);
     else if (m_windowMode == "fullscreen")
         SDL_SetWindowFullscreen(Game::GetInstance().GetWindow(), SDL_WINDOW_FULLSCREEN);
+    else if (m_windowMode == "borderless")
+    {
+        SDL_SetWindowFullscreen(Game::GetInstance().GetWindow(), SDL_WINDOW_BORDERLESS);
+        int displayIndex = SDL_GetDisplayForWindow(Game::GetInstance().GetWindow());
+
+        SDL_Rect displayBounds;
+        SDL_GetDisplayBounds(displayIndex, &displayBounds);
+        SDL_SetWindowSize(Game::GetInstance().GetWindow(), displayBounds.w, displayBounds.h);
+    }
 
     SDL_GetWindowSize(Game::GetInstance().GetWindow(), &m_width, &m_height);
+
+    SaveDataHandler::GetInstance().SaveData("width", m_width);
+    SaveDataHandler::GetInstance().SaveData("height", m_height);
+    SaveDataHandler::GetInstance().SaveData("window-mode", m_windowMode);
 }
 
 #pragma endregion
