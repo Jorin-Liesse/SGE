@@ -69,22 +69,34 @@ void SaveDataHandler::CleanUp()
 
 void SaveDataHandler::LoadFromDisk()
 {
-    FILE *file = fopen(m_path.c_str(), "r");
-    if (!file)
+    SDL_IOStream* io = SDL_IOFromFile(m_path.c_str(), "rb");
+    if (!io)
     {
         m_root = cJSON_CreateObject();
         SaveToDisk();
         return;
     }
 
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    Sint64 size = SDL_GetIOSize(io);
+    if (size <= 0)
+    {
+        SDL_CloseIO(io);
+        m_root = cJSON_CreateObject();
+        SaveToDisk();
+        return;
+    }
 
-    char *data = new char[size + 1];
-    fread(data, 1, size, file);
+    char* data = new char[size + 1];
+    if (SDL_ReadIO(io, data, size) != size)
+    {
+        delete[] data;
+        SDL_CloseIO(io);
+        m_root = cJSON_CreateObject();
+        SaveToDisk();
+        return;
+    }
     data[size] = '\0';
-    fclose(file);
+    SDL_CloseIO(io);
 
     m_root = cJSON_Parse(data);
     delete[] data;
@@ -101,12 +113,12 @@ void SaveDataHandler::SaveToDisk()
     if (!m_root)
         return;
 
-    char *data = cJSON_PrintUnformatted(m_root);
-    FILE *file = fopen(m_path.c_str(), "w");
-    if (file)
+    char* data = cJSON_PrintUnformatted(m_root);
+    SDL_IOStream* io = SDL_IOFromFile(m_path.c_str(), "wb");
+    if (io)
     {
-        fprintf(file, "%s", data);
-        fclose(file);
+        SDL_WriteIO(io, data, SDL_strlen(data));
+        SDL_CloseIO(io);
     }
     free(data);
 
