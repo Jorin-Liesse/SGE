@@ -45,8 +45,8 @@ void FPSHandler::Init()
     m_fps = SaveDataHandler::GetInstance().LoadIntData("fps", defaultFps);
     m_vsync = SaveDataHandler::GetInstance().LoadBoolData("vsync", defaultVsync);
 
-    ChangeFps();
-    ChangeVsync();
+    ChangedFps();
+    ChangedVsync();
 }
 
 void FPSHandler::CleanUp()
@@ -98,16 +98,19 @@ void FPSHandler::Execute()
 
 #pragma region Private Methods
 
-void FPSHandler::ChangeFps()
+void FPSHandler::ChangedFps()
 {
+    SaveDataHandler::GetInstance().SaveData("fps", m_fps);
 }
 
-void FPSHandler::ChangeVsync()
+void FPSHandler::ChangedVsync()
 {
     if (m_vsync)
         SDL_SetRenderVSync(Game::GetInstance().GetRenderer(), -1); // enable vsync
     else
         SDL_SetRenderVSync(Game::GetInstance().GetRenderer(), 0); // disable vsync
+
+    SaveDataHandler::GetInstance().SaveData("vsync", m_vsync);
 }
 
 #pragma endregion
@@ -140,7 +143,7 @@ void FPSHandler::SetVsync(bool vsync)
     if (m_vsync == vsync)
         return;
     m_vsync = vsync;
-    ChangeVsync();
+    ChangedVsync();
 }
 
 int FPSHandler::GetFps()
@@ -152,7 +155,7 @@ void FPSHandler::SetFps(int fps)
     if (m_fps == fps)
         return;
     m_fps = fps;
-    ChangeFps();
+    ChangedFps();
 }
 
 float FPSHandler::GetCurrentFPS()

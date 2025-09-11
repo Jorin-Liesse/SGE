@@ -42,7 +42,7 @@ namespace sge
         double m_lastTime;
         int m_frames;
 
-        void ChangeFps();
-        void ChangeVsync();
+        void ChangedFps();
+        void ChangedVsync();
     };
 }

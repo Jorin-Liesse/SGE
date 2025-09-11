@@ -29,11 +29,14 @@ bool Game::Init()
 
     m_window = SDL_CreateWindow("game", 500, 500, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     m_renderer = SDL_CreateRenderer(m_window, NULL);
+    m_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
 
     AssetsHandler::GetInstance().Init();
     SaveDataHandler::GetInstance().Init();
     FPSHandler::GetInstance().Init();
     StatusHandler::GetInstance().Init();
+    AudioHandler::GetInstance().Init();
+    ResolutionHandler::GetInstance().Init();
 
     int infoDataId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
     cJSON *infoJson = AssetsHandler::GetInstance().GetJson(infoDataId);
@@ -41,23 +44,7 @@ bool Game::Init()
     string title = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "project"));
     string iconPath = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "icon-path"));
 
-    int defaultWidth = cJSON_GetObjectItem(infoJson, "default-width")->valueint;
-    int defaultHeight = cJSON_GetObjectItem(infoJson, "default-height")->valueint;
-    string defaultWindowMode = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "default-window-mode"));
-
-    float defaultAudioVolume = float(cJSON_GetObjectItem(infoJson, "default-audio-volume")->valuedouble);
-    float defaultMusicVolume = float(cJSON_GetObjectItem(infoJson, "default-music-volume")->valuedouble);
-    float defaultSoundVolume = float(cJSON_GetObjectItem(infoJson, "default-sound-volume")->valuedouble);
-
     AssetsHandler::GetInstance().UnUsedJson(infoDataId);
-
-    m_width = SaveDataHandler::GetInstance().LoadIntData("width", defaultWidth);
-    m_height = SaveDataHandler::GetInstance().LoadIntData("height", defaultHeight);
-    m_windowMode = SaveDataHandler::GetInstance().LoadStringData("window-mode", defaultWindowMode);
-
-    m_audioVolume = SaveDataHandler::GetInstance().LoadFloatData("audio-volume", defaultAudioVolume);
-    m_musicVolume = SaveDataHandler::GetInstance().LoadFloatData("music-volume", defaultMusicVolume);
-    m_soundVolume = SaveDataHandler::GetInstance().LoadFloatData("sound-volume", defaultSoundVolume);
 
     SDL_SetWindowTitle(m_window, title.c_str());
 
@@ -65,18 +52,7 @@ bool Game::Init()
     SDL_SetWindowIcon(m_window, icon);
     SDL_DestroySurface(icon);
 
-    m_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
-
     TestInit();
-
-    // if (m_windowMode == "windowed")
-    //     SDL_SetWindowSize(m_window, m_width, m_height);
-    // else if (m_windowMode == "borderless")
-    //     SDL_SetWindowFullscreen(m_window, SDL_WINDOW_BORDERLESS);
-    // else if (m_windowMode == "fullscreen")
-    //     SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
-
-    // SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN); // SDL_WINDOW_BORDERLESS // SDL_WINDOW_FULLSCREEN //
 
     return true;
 }
@@ -172,22 +148,15 @@ SDL_Window *Game::GetWindow()
 {
     return m_window;
 }
-void Game::SetWindow(SDL_Window *window)
-{
-    if (m_window == window)
-        return;
-    m_window = window;
-}
 
 SDL_Renderer *Game::GetRenderer()
 {
     return m_renderer;
 }
-void Game::SetRenderer(SDL_Renderer *renderer)
+
+MIX_Mixer *Game::GetMixer()
 {
-    if (m_renderer == renderer)
-        return;
-    m_renderer = renderer;
+    return m_mixer;
 }
 
 SDL_Event *Game::GetEvent()
@@ -210,17 +179,6 @@ void Game::SetAppResult(SDL_AppResult result)
     if (m_appResult == result)
         return;
     m_appResult = result;
-}
-
-MIX_Mixer *Game::GetMixer()
-{
-    return m_mixer;
-}
-void Game::SetMixer(MIX_Mixer *mixer)
-{
-    if (m_mixer == mixer)
-        return;
-    m_mixer = mixer;
 }
 
 #pragma endregion
@@ -285,21 +243,32 @@ void Game::TestEvent(SDL_Event *event)
             AssetsHandler::GetInstance().UnUsedJson(jsonId);
         }
 
-        else if (m_event->key.key == SDLK_KP_1)
+        // else if (m_event->key.key == SDLK_KP_1)
+        // {
+        //     m_width = SaveDataHandler::GetInstance().LoadIntData("width");
+        //     m_height = SaveDataHandler::GetInstance().LoadIntData("height");
+        //     m_windowMode = SaveDataHandler::GetInstance().LoadStringData("window-mode");
+
+        //     m_fps = SaveDataHandler::GetInstance().LoadIntData("fps");
+        //     m_vsync = SaveDataHandler::GetInstance().LoadBoolData("vsync");
+
+        //     m_audioVolume = SaveDataHandler::GetInstance().LoadFloatData("audio-volume");
+        //     m_musicVolume = SaveDataHandler::GetInstance().LoadFloatData("music-volume");
+        //     m_soundVolume = SaveDataHandler::GetInstance().LoadFloatData("sound-volume");
+
+        //     ShowMessage("Load Settings", format("Width: {}\nHeight: {}\nWindow Mode: {}\nFPS: {}\nVSync: {}\nAudio Volume: {:.2f}\nMusic Volume: {:.2f}\nSound Volume: {:.2f}",
+        //                                         m_width, m_height, m_windowMode, m_fps, m_vsync ? "true" : "false", m_audioVolume, m_musicVolume, m_soundVolume));
+        // }
+
+        else if (m_event->key.key == SDLK_LEFT)
         {
-            m_width = SaveDataHandler::GetInstance().LoadIntData("width");
-            m_height = SaveDataHandler::GetInstance().LoadIntData("height");
-            m_windowMode = SaveDataHandler::GetInstance().LoadStringData("window-mode");
-
-            m_fps = SaveDataHandler::GetInstance().LoadIntData("fps");
-            m_vsync = SaveDataHandler::GetInstance().LoadBoolData("vsync");
-
-            m_audioVolume = SaveDataHandler::GetInstance().LoadFloatData("audio-volume");
-            m_musicVolume = SaveDataHandler::GetInstance().LoadFloatData("music-volume");
-            m_soundVolume = SaveDataHandler::GetInstance().LoadFloatData("sound-volume");
-
-            ShowMessage("Load Settings", format("Width: {}\nHeight: {}\nWindow Mode: {}\nFPS: {}\nVSync: {}\nAudio Volume: {:.2f}\nMusic Volume: {:.2f}\nSound Volume: {:.2f}",
-                                                m_width, m_height, m_windowMode, m_fps, m_vsync ? "true" : "false", m_audioVolume, m_musicVolume, m_soundVolume));
+            AudioHandler::GetInstance().SetAudioVolume(AudioHandler::GetInstance().GetAudioVolume() - 0.1f);
+            ShowMessage("Audio Volume", format("{:.2f}", AudioHandler::GetInstance().GetAudioVolume()));
+        }
+        else if (m_event->key.key == SDLK_RIGHT)
+        {
+            AudioHandler::GetInstance().SetAudioVolume(AudioHandler::GetInstance().GetAudioVolume() + 0.1f);
+            ShowMessage("Audio Volume", format("{:.2f}", AudioHandler::GetInstance().GetAudioVolume()));
         }
     }
 }
@@ -325,13 +294,7 @@ void Game::TestTextInit()
 
 void Game::TestAudioInit()
 {
-    m_track = MIX_CreateTrack(m_mixer);
-
-    int musicId = AssetsHandler::GetInstance().UsedMusic("assets/audio/the_entertainer.ogg");
-    MIX_Audio *music = AssetsHandler::GetInstance().GetMusic(musicId);
-
-    MIX_SetTrackAudio(m_track, music);
-    MIX_PlayTrack(m_track, -1);
+    AudioHandler::GetInstance().PlayMusic("assets/audio/the_entertainer.ogg", -1);
 }
 
 void Game::TestImageInit()
@@ -363,10 +326,10 @@ void Game::TestSaveDataInit()
     count_s += "a";
     SaveDataHandler::GetInstance().SaveData("test-count-s", count_s);
 
-    ShowMessage("Integer", to_string(count_i));
-    ShowMessage("Float", to_string(count_f));
-    ShowMessage("Boolean", count_b ? "true" : "false");
-    ShowMessage("String", count_s);
+    // ShowMessage("Integer", to_string(count_i));
+    // ShowMessage("Float", to_string(count_f));
+    // ShowMessage("Boolean", count_b ? "true" : "false");
+    // ShowMessage("String", count_s);
 }
 
 void Game::TestStatusInit()

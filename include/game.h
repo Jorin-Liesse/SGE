@@ -4,6 +4,8 @@
 #include "saveDataHandler.h"
 #include "FPSHandler.h"
 #include "statusHandler.h"
+#include "audioHandler.h"
+#include "resolutionHandler.h"
 #include "cJSON.h"
 
 #include <SDL3/SDL.h>
@@ -37,10 +39,8 @@ namespace sge
         void Execute();
 
         SDL_Window *GetWindow();
-        void SetWindow(SDL_Window *window);
-
         SDL_Renderer *GetRenderer();
-        void SetRenderer(SDL_Renderer *renderer);
+        MIX_Mixer *GetMixer();
         
         SDL_Event *GetEvent();
         void SetEvent(SDL_Event *event);
@@ -48,10 +48,7 @@ namespace sge
         SDL_AppResult GetAppResult();
         void SetAppResult(SDL_AppResult result);
 
-        MIX_Mixer *GetMixer();
-        void SetMixer(MIX_Mixer *mixer);
-
-        void ShowMessage(const std::string &title, const std::string &message);
+        void ShowMessage(const std::string &title, const std::string &message = "");
 
     private:
         SDL_Event *m_event;
@@ -60,16 +57,9 @@ namespace sge
         SDL_AppResult m_appResult;
         MIX_Mixer *m_mixer;
 
-        int m_width, m_height;
-        bool m_vsync;
-        int m_fps;
-        float m_audioVolume, m_musicVolume, m_soundVolume;
-        std::string m_windowMode;
-
         //
         SDL_Texture *m_messageTex, *m_imageTex, *m_fpsTex;
         SDL_FRect m_messageDest, m_fpsDest;
-        MIX_Track *m_track;
 
         int m_fontId;
 
