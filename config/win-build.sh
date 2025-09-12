@@ -104,4 +104,3 @@ if [[ "$LAUNCH" == "true" ]]; then
     echo "Launching $PROJECT.exe..."
     cmd.exe /c start "" "$BUILD_DIR/$CONFIG/$PROJECT.exe"
 fi
-

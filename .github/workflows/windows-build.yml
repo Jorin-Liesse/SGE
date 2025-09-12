@@ -19,37 +19,16 @@ jobs:
           - name: Set project env vars
             shell: bash
             run: |
-              ICON_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['icon-path'])")
-              PROJECT=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['project'])")
-              ASSETS_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['assets-path'])")
-              RESOURCES_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['resources-path'])")
               BUILD_MODE=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['build-mode'])")
               BUILD_MODE_CAP=${BUILD_MODE^}
 
-              echo "ICON_PATH=$ICON_PATH" >> $GITHUB_ENV
-              echo "PROJECT=$PROJECT" >> $GITHUB_ENV
-              echo "ASSETS_PATH=$ASSETS_PATH" >> $GITHUB_ENV
-              echo "RESOURCES_PATH=$RESOURCES_PATH" >> $GITHUB_ENV
               echo "BUILD_MODE=$BUILD_MODE" >> $GITHUB_ENV
               echo "BUILD_MODE_CAP=$BUILD_MODE_CAP" >> $GITHUB_ENV
 
-          - name: Install ImageMagick
-            run: choco install imagemagick --yes
-
-          - name: Create Windows Icon
-            run: |
-              magick convert ${{ env.ICON_PATH }} -define icon:auto-resize="16,32,48,256" ${{ env.RESOURCES_PATH }}/icon.ico
-
-          - name: Configure
-            run: cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -A${{ matrix.arch }} -S . -B build
-          - name: Build
-            run: cmake --build build --target ${{ env.PROJECT }} --config Release
-
-          - name: Copy Assets
+          - name: Run Windows build script
             shell: bash
             run: |
-              mkdir -p build/Release/assets
-              cp -r "${{ env.ASSETS_PATH }}"/* build/Release/${{ env.ASSETS_PATH }}
+              ./config/win-build.sh --architecture=${{ matrix.arch }} --launch=false
 
           - name: Upload Build
             uses: actions/upload-artifact@v4
