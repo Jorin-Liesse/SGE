@@ -21,7 +21,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_SetHint(SDL_HINT_ANDROID_TRAP_BACK_BUTTON, "1");
 #endif
 
-    if (not SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+    if (not SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMEPAD))
         return SDL_Fail();
 
     if (not TTF_Init())

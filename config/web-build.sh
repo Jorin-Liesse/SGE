@@ -3,13 +3,26 @@ set -euo pipefail
 
 # ---- CONFIG ----
 BUILD_DIR="build/web"
-CONFIG="Release"
+
+LAUNCH="false"
+
+for ARG in "$@"; do
+    case $ARG in
+        --launch=*)
+            LAUNCH="${ARG#*=}"
+            shift
+        ;;
+        *)
+            echo "Unknown argument: $ARG"
+        ;;
+    esac
+done
 
 # ---- FUNCTIONS ----
 check_or_install() {
     local cmd="$1"
     local choco_pkg="$2"
-
+    
     if ! command -v "$cmd" &> /dev/null; then
         echo "'$cmd' not found. Installing via Chocolatey..."
         choco install "$choco_pkg" --yes
@@ -40,6 +53,7 @@ MANIFEST_ORIENTATION=$(python -c "import json; print(json.load(open('assets/data
 MANIFEST_WINDOW_MODE=$(python -c "import json; print(json.load(open('assets/data/info.json'))['manifest-window-mode'])")
 ICON_PATH=$(python -c "import json; print(json.load(open('assets/data/info.json'))['icon-path'])")
 RESOURCES_PATH=$(python -c "import json; print(json.load(open('assets/data/info.json'))['resources-path'])")
+BUILD_MODE=$(python -c "import json; print(json.load(open('assets/data/info.json'))['build-mode'])")
 
 echo "PROJECT=$PROJECT"
 echo "COMPANY=$COMPANY"
@@ -47,6 +61,17 @@ echo "MANIFEST_ORIENTATION=$MANIFEST_ORIENTATION"
 echo "MANIFEST_WINDOW_MODE=$MANIFEST_WINDOW_MODE"
 echo "ICON_PATH=$ICON_PATH"
 echo "RESOURCES_PATH=$RESOURCES_PATH"
+echo "BUILD_MODE=$BUILD_MODE"
+
+# ---- SET BUILD CONFIG ----
+if [[ "$BUILD_MODE" == "debug" ]]; then
+    CONFIG="Debug"
+    elif [[ "$BUILD_MODE" == "release" ]]; then
+    CONFIG="Release"
+else
+    echo "Unknown build mode '$BUILD_MODE' in info.json. Use 'debug' or 'release'."
+    exit 1
+fi
 
 # ---- BUILD ----
 mkdir -p "$BUILD_DIR"
@@ -84,11 +109,14 @@ cp "$ICON_PATH" "${BUILD_DIR}/${CONFIG}/$ICON_DIR/"
 echo "Web build complete ✅. Ready in '$BUILD_DIR/$CONFIG/'"
 
 # ---- START LOCAL SERVER ----
-echo "Starting local web server at http://localhost:8000"
-cd "${BUILD_DIR}/${CONFIG}"
 
-python -m http.server 8000 &
-
-cmd.exe /c start http://localhost:8000
-
-wait
+if [[ "$LAUNCH" == "true" ]]; then
+    echo "Starting local web server at http://localhost:8000"
+    cd "${BUILD_DIR}/${CONFIG}"
+    
+    python -m http.server 8000 &
+    
+    cmd.exe /c start http://localhost:8000
+    
+    wait
+fi

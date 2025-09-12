@@ -16,7 +16,7 @@
             "label": "Build (Web)",
             "type": "shell",
             "command": "bash",
-            "args": ["./config/web-build.sh"],
+            "args": ["./config/web-build.sh", "--launch=true"],
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -126,37 +126,16 @@ void Game::Render()
 
 void Game::Logger(const std::string &title, const char *fmt, ...)
 {
-
-    // Format the message
-    char buffer[1024]; // enough for most log messages
+    char buffer[1024];
     va_list args;
     va_start(args, fmt);
     vsnprintf(buffer, sizeof(buffer), fmt, args);
     va_end(args);
 
-#ifdef __EMSCRIPTEN__
     if (fmt == nullptr || *fmt == '\0')
         SDL_Log("SDL Error: %s\n", SDL_GetError());
     else
         SDL_Log("%s: %s\n", title.c_str(), buffer);
-#else
-    if (fmt == nullptr || *fmt == '\0')
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), SDL_GetError(), nullptr);
-    else
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), buffer, nullptr);
-#endif
-    // #ifdef __EMSCRIPTEN__
-    //     if (message.empty())
-    //         printf("SDL Error: %s\n", SDL_GetError());
-    //     else
-    //         printf("%s: %s\n", title.c_str(), message.c_str());
-    // #else
-    //     if (message.empty())
-    //         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), SDL_GetError(), nullptr);
-    //     else
-    //         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), message.c_str(), nullptr);
-
-    // #endif
 }
 
 #pragma endregion
@@ -267,11 +246,11 @@ void Game::TestEvent(SDL_Event *event)
                    "Default Sound Volume: {:.2f}\n"
                    "Default FPS: {}\n"
                    "Default VSync: {}",
-                   title,
-                   iconPath,
+                   title.c_str(),
+                   iconPath.c_str(),
                    defaultWidth,
                    defaultHeight,
-                   defaultWindowMode,
+                   defaultWindowMode.c_str(),
                    defaultAudioVolume,
                    defaultMusicVolume,
                    defaultSoundVolume,

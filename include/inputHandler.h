@@ -8,6 +8,7 @@
 
 #include <SDL3/SDL.h>
 #include <string>
+#include <vector>
 
 namespace sge
 {

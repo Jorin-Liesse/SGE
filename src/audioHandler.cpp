@@ -166,7 +166,7 @@ int AudioHandler::PlayMusic(const std::string &filePath, int loops)
     if (!music)
     {
         AssetsHandler::GetInstance().UnUsedMusic(musicId);
-        Game::GetInstance().Logger("Error playing music", "PlayMusic, Failed to load music: {}\n", filePath);
+        Game::GetInstance().Logger("Error playing music", "PlayMusic, Failed to load music: {}\n", filePath.c_str());
         return -1;
     }
 
@@ -232,7 +232,7 @@ int AudioHandler::PlaySoundEffect(const string &filePath, int loops)
     MIX_Audio *soundEffect = AssetsHandler::GetInstance().GetSoundEffect(soundEffectId);
     if (!soundEffect)
     {
-        Game::GetInstance().Logger("Error playing sound effect", "PlaySoundEffect, Failed to load sound effect: {}\n", filePath);
+        Game::GetInstance().Logger("Error playing sound effect", "PlaySoundEffect, Failed to load sound effect: {}\n", filePath.c_str());
         AssetsHandler::GetInstance().UnUsedSoundEffect(soundEffectId);
         return -1;
     }
