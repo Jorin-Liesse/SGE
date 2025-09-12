@@ -27,14 +27,14 @@ void ResolutionHandler::Init()
     int defaultHeight = cJSON_GetObjectItem(infoJson, "default-height")->valueint;
     string defaultWindowMode = cJSON_GetStringValue(cJSON_GetObjectItem(infoJson, "default-window-mode"));
 
-    AssetsHandler::GetInstance().UnUsedJson(infoDataId);
-
     m_width = SaveDataHandler::GetInstance().LoadIntData("width", defaultWidth);
     m_height = SaveDataHandler::GetInstance().LoadIntData("height", defaultHeight);
     m_windowMode = SaveDataHandler::GetInstance().LoadStringData("window-mode", defaultWindowMode);
 
     ChangedResolution();
     ChangedWindowMode();
+
+    AssetsHandler::GetInstance().UnUsedJson(infoDataId);
 }
 
 void ResolutionHandler::Cleanup()
@@ -44,6 +44,21 @@ void ResolutionHandler::Cleanup()
 #pragma endregion
 
 #pragma region Engine Methods
+
+void ResolutionHandler::HandleEvents(SDL_Event *event)
+{
+    if (event->type == SDL_EVENT_WINDOW_RESIZED)
+    {
+        SDL_WindowEvent *e = (SDL_WindowEvent *)event;
+        m_width = e->data1;
+        m_height = e->data2;
+
+        ChangedResolution();
+
+        Game::GetInstance().Logger("ResolutionHandler", "Window resized to %dx%d", m_width, m_height);
+    }
+}
+
 #pragma endregion
 
 #pragma region Private Methods
@@ -54,6 +69,8 @@ void ResolutionHandler::ChangedResolution()
 
     SaveDataHandler::GetInstance().SaveData("width", m_width);
     SaveDataHandler::GetInstance().SaveData("height", m_height);
+
+    OnResolutionChange.invoke(m_width, m_height);
 }
 
 void ResolutionHandler::ChangedWindowMode()
@@ -77,6 +94,8 @@ void ResolutionHandler::ChangedWindowMode()
     SaveDataHandler::GetInstance().SaveData("width", m_width);
     SaveDataHandler::GetInstance().SaveData("height", m_height);
     SaveDataHandler::GetInstance().SaveData("window-mode", m_windowMode);
+
+    OnWindowModeChange.invoke(m_windowMode);
 }
 
 #pragma endregion
@@ -99,7 +118,6 @@ void ResolutionHandler::SetWidth(int width)
     m_width = width;
 
     ChangedResolution();
-    OnResolutionChange.invoke(m_width, m_height);
 }
 
 int ResolutionHandler::GetHeight() const
@@ -115,7 +133,6 @@ void ResolutionHandler::SetHeight(int height)
     m_height = height;
 
     ChangedResolution();
-    OnResolutionChange.invoke(m_width, m_height);
 }
 
 std::string ResolutionHandler::GetWindowMode() const
@@ -131,7 +148,6 @@ void ResolutionHandler::SetWindowMode(const std::string &mode)
     m_windowMode = mode;
 
     ChangedWindowMode();
-    OnWindowModeChange.invoke(m_windowMode);
 }
 
 #pragma endregion

@@ -16,21 +16,9 @@ set(JSON_COMPANY ${CMAKE_MATCH_1})
 string(REGEX MATCH "\"version\"[ \t]*:[ \t]*\"([^\"]+)\"" _ MATCH_VERSION ${JSON_CONTENT})
 set(JSON_VERSION ${CMAKE_MATCH_1})
 
-# Extract description
-string(REGEX MATCH "\"description\"[ \t]*:[ \t]*\"([^\"]+)\"" _ MATCH_DESCRIPTION ${JSON_CONTENT})
-set(JSON_DESCRIPTION ${CMAKE_MATCH_1})
-
-# Extract author
-string(REGEX MATCH "\"author\"[ \t]*:[ \t]*\"([^\"]+)\"" _ MATCH_AUTHOR ${JSON_CONTENT})
-set(JSON_AUTHOR ${CMAKE_MATCH_1})
-
-# Extract license
-string(REGEX MATCH "\"license\"[ \t]*:[ \t]*\"([^\"]+)\"" _ MATCH_LICENSE ${JSON_CONTENT})
-set(JSON_LICENSE ${CMAKE_MATCH_1})
-
-# Extract credits
-string(REGEX MATCH "\"credits\"[ \t]*:[ \t]*\"([^\"]+)\"" _ MATCH_CREDITS ${JSON_CONTENT})
-set(JSON_CREDITS ${CMAKE_MATCH_1})
+# Extract build mode
+string(REGEX MATCH "\"build-mode\"[ \t]*:[ \t]*\"([^\"]+)\"" _ MATCH_BUILD_MODE ${JSON_CONTENT})
+set(JSON_BUILD_MODE ${CMAKE_MATCH_1})
 
 # Extract icon-path
 string(REGEX MATCH "\"icon-path\"[ \t]*:[ \t]*\"([^\"]+)\"" _ MATCH_ICON_PATH ${JSON_CONTENT})
@@ -94,7 +82,11 @@ if(ANDROID)
     set(EXECUTABLE_NAME main)
     add_library(${EXECUTABLE_NAME} SHARED)
 elseif(WIN32)
-    add_executable(${EXECUTABLE_NAME} WIN32)
+    if(JSON_BUILD_MODE STREQUAL "release")
+        add_executable(${EXECUTABLE_NAME} WIN32)
+    else()
+        add_executable(${EXECUTABLE_NAME})
+    endif()
     target_sources(${EXECUTABLE_NAME} PRIVATE resources/appicon.rc)
 else()
     add_executable(${EXECUTABLE_NAME})

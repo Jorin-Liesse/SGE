@@ -37,6 +37,7 @@ bool Game::Init()
     StatusHandler::GetInstance().Init();
     AudioHandler::GetInstance().Init();
     ResolutionHandler::GetInstance().Init();
+    InputHandler::GetInstance().Init();
 
     int infoDataId = AssetsHandler::GetInstance().UsedJson("assets/data/info.json");
     cJSON *infoJson = AssetsHandler::GetInstance().GetJson(infoDataId);
@@ -63,6 +64,9 @@ void Game::Cleanup()
     AssetsHandler::GetInstance().CleanUp();
     FPSHandler::GetInstance().CleanUp();
     StatusHandler::GetInstance().Cleanup();
+    AudioHandler::GetInstance().CleanUp();
+    ResolutionHandler::GetInstance().Cleanup();
+    InputHandler::GetInstance().Cleanup();
 
     if (m_renderer)
         SDL_DestroyRenderer(m_renderer);
@@ -83,14 +87,10 @@ void Game::Event()
         return;
 
     StatusHandler::GetInstance().HandleEvents(m_event);
+    ResolutionHandler::GetInstance().HandleEvents(m_event);
+    InputHandler::GetInstance().HandleEvents(m_event);
 
     TestEvent(m_event);
-
-    if (m_event->type == SDL_EVENT_KEY_DOWN)
-    {
-        if (m_event->key.key == SDLK_ESCAPE)
-            m_appResult = SDL_APP_SUCCESS;
-    }
 
     if (m_event->type == SDL_EVENT_QUIT)
         m_appResult = SDL_APP_SUCCESS;
@@ -124,20 +124,39 @@ void Game::Render()
 
 #pragma region Public Methods
 
-void Game::ShowMessage(const string &title, const string &message)
+void Game::Logger(const std::string &title, const char *fmt, ...)
 {
+
+    // Format the message
+    char buffer[1024]; // enough for most log messages
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+
 #ifdef __EMSCRIPTEN__
-    if (message.empty())
-        printf("SDL Error: %s\n", SDL_GetError());
+    if (fmt == nullptr || *fmt == '\0')
+        SDL_Log("SDL Error: %s\n", SDL_GetError());
     else
-        printf("%s: %s\n", title.c_str(), message.c_str());
+        SDL_Log("%s: %s\n", title.c_str(), buffer);
 #else
-    if (message.empty())
+    if (fmt == nullptr || *fmt == '\0')
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), SDL_GetError(), nullptr);
     else
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), message.c_str(), nullptr);
-
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), buffer, nullptr);
 #endif
+    // #ifdef __EMSCRIPTEN__
+    //     if (message.empty())
+    //         printf("SDL Error: %s\n", SDL_GetError());
+    //     else
+    //         printf("%s: %s\n", title.c_str(), message.c_str());
+    // #else
+    //     if (message.empty())
+    //         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), SDL_GetError(), nullptr);
+    //     else
+    //         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), message.c_str(), nullptr);
+
+    // #endif
 }
 
 #pragma endregion
@@ -237,9 +256,28 @@ void Game::TestEvent(SDL_Event *event)
             int defaultFps = cJSON_GetObjectItem(infoJson, "default-fps")->valueint;
             bool defaultVsync = cJSON_GetObjectItem(infoJson, "default-vsync")->valueint;
 
-            ShowMessage("Info Json",
-                        format("Project: {}\nIcon Path: {}\nDefault Width: {}\nDefault Height: {}\nDefault Window Mode: {}\nDefault Audio Volume: {:.2f}\nDefault Music Volume: {:.2f}\nDefault Sound Volume: {:.2f}\nDefault FPS: {}\nDefault VSync: {}",
-                               title, iconPath, defaultWidth, defaultHeight, defaultWindowMode, defaultAudioVolume, defaultMusicVolume, defaultSoundVolume, defaultFps, defaultVsync ? "true" : "false"));
+            Logger("Info Json",
+                   "Project: {}\n"
+                   "Icon Path: {}\n"
+                   "Default Width: {}\n"
+                   "Default Height: {}\n"
+                   "Default Window Mode: {}\n"
+                   "Default Audio Volume: {:.2f}\n"
+                   "Default Music Volume: {:.2f}\n"
+                   "Default Sound Volume: {:.2f}\n"
+                   "Default FPS: {}\n"
+                   "Default VSync: {}",
+                   title,
+                   iconPath,
+                   defaultWidth,
+                   defaultHeight,
+                   defaultWindowMode,
+                   defaultAudioVolume,
+                   defaultMusicVolume,
+                   defaultSoundVolume,
+                   defaultFps,
+                   defaultVsync ? "true" : "false");
+                   
             AssetsHandler::GetInstance().UnUsedJson(jsonId);
         }
 
@@ -263,12 +301,12 @@ void Game::TestEvent(SDL_Event *event)
         else if (m_event->key.key == SDLK_LEFT)
         {
             AudioHandler::GetInstance().SetAudioVolume(AudioHandler::GetInstance().GetAudioVolume() - 0.1f);
-            ShowMessage("Audio Volume", format("{:.2f}", AudioHandler::GetInstance().GetAudioVolume()));
+            Logger("Audio Volume", "{:.2f}", AudioHandler::GetInstance().GetAudioVolume());
         }
         else if (m_event->key.key == SDLK_RIGHT)
         {
             AudioHandler::GetInstance().SetAudioVolume(AudioHandler::GetInstance().GetAudioVolume() + 0.1f);
-            ShowMessage("Audio Volume", format("{:.2f}", AudioHandler::GetInstance().GetAudioVolume()));
+            Logger("Audio Volume", "{:.2f}", AudioHandler::GetInstance().GetAudioVolume());
         }
     }
 }
@@ -334,17 +372,14 @@ void Game::TestSaveDataInit()
 
 void Game::TestStatusInit()
 {
-    StatusHandler::GetInstance().OnVisibilityChange.subscribe([](bool visibility) {
-        printf("Visibility changed: %s\n", visibility ? "true" : "false");
-    });
+    StatusHandler::GetInstance().OnVisibilityChange.subscribe([](bool visibility)
+                                                              { printf("Visibility changed: %s\n", visibility ? "true" : "false"); });
 
-    StatusHandler::GetInstance().OnFocusChange.subscribe([](bool focused) {
-        printf("Focus changed: %s\n", focused ? "true" : "false");
-    });
+    StatusHandler::GetInstance().OnFocusChange.subscribe([](bool focused)
+                                                         { printf("Focus changed: %s\n", focused ? "true" : "false"); });
 
-    StatusHandler::GetInstance().OnWasHiddenChange.subscribe([](bool wasHidden) {
-        printf("WasHidden changed: %s\n", wasHidden ? "true" : "false");
-    });
+    StatusHandler::GetInstance().OnWasHiddenChange.subscribe([](bool wasHidden)
+                                                             { printf("WasHidden changed: %s\n", wasHidden ? "true" : "false"); });
 }
 
 void Game::TestFPSInit()

@@ -30,8 +30,6 @@ void AudioHandler::Init()
     float defaultMusicVolume = float(cJSON_GetObjectItem(infoJson, "default-music-volume")->valuedouble);
     float defaultSoundVolume = float(cJSON_GetObjectItem(infoJson, "default-sound-volume")->valuedouble);
 
-    AssetsHandler::GetInstance().UnUsedJson(infoDataId);
-
     m_audioVolume = SaveDataHandler::GetInstance().LoadFloatData("audio-volume", defaultAudioVolume);
     m_musicVolume = SaveDataHandler::GetInstance().LoadFloatData("music-volume", defaultMusicVolume);
     m_soundVolume = SaveDataHandler::GetInstance().LoadFloatData("sound-volume", defaultSoundVolume);
@@ -48,6 +46,8 @@ void AudioHandler::Init()
     ChangedAudioVolume();
     ChangedMusicVolume();
     ChangedSoundVolume();
+
+    AssetsHandler::GetInstance().UnUsedJson(infoDataId);
 }
 
 void AudioHandler::CleanUp()
@@ -90,7 +90,7 @@ int AudioHandler::GetUnusedMusicTrack()
         return trackId;
     }
 
-    Game::GetInstance().ShowMessage("Error playing music", "GetUnusedMusicTrack, no available track");
+    Game::GetInstance().Logger("Error playing music", "GetUnusedMusicTrack, no available track");
     return -1;
 }
 
@@ -110,7 +110,7 @@ int AudioHandler::GetUnusedSoundEffectTrack()
         return trackId;
     }
 
-    Game::GetInstance().ShowMessage("Error playing sound effect", "GetUnusedSoundEffectTrack, no available track");
+    Game::GetInstance().Logger("Error playing sound effect", "GetUnusedSoundEffectTrack, no available track");
     return -1;
 }
 
@@ -150,14 +150,14 @@ int AudioHandler::PlayMusic(const std::string &filePath, int loops)
     int trackId = GetUnusedMusicTrack();
     if (trackId == -1)
     {
-        Game::GetInstance().ShowMessage("Error playing music", "PlayMusic, no available track");
+        Game::GetInstance().Logger("Error playing music", "PlayMusic, no available track");
         return -1;
     }
 
     MIX_Track *track = m_musicTracks[trackId];
     if (!track)
     {
-        Game::GetInstance().ShowMessage("Error playing music", "PlayMusic, Failed to get track: " + to_string(trackId));
+        Game::GetInstance().Logger("Error playing music", "PlayMusic, Failed to get track: {}\n", trackId);
         return -1;
     }
 
@@ -166,7 +166,7 @@ int AudioHandler::PlayMusic(const std::string &filePath, int loops)
     if (!music)
     {
         AssetsHandler::GetInstance().UnUsedMusic(musicId);
-        Game::GetInstance().ShowMessage("Error playing music", "PlayMusic, Failed to load music: " + filePath);
+        Game::GetInstance().Logger("Error playing music", "PlayMusic, Failed to load music: {}\n", filePath);
         return -1;
     }
 
@@ -175,7 +175,7 @@ int AudioHandler::PlayMusic(const std::string &filePath, int loops)
     int channel = MIX_PlayTrack(track, loops);
     if (channel < 0)
     {
-        Game::GetInstance().ShowMessage("Error playing music", "PlayMusic, MIX_PlayTrack failed");
+        Game::GetInstance().Logger("Error playing music", "PlayMusic, MIX_PlayTrack failed");
         AssetsHandler::GetInstance().UnUsedMusic(musicId);
         return -1;
     }
@@ -198,14 +198,14 @@ void AudioHandler::StopMusic(int trackId, int fadeOutMs)
 {
     if (trackId < 0 || trackId >= static_cast<int>(m_musicTracks.size()))
     {
-        Game::GetInstance().ShowMessage("Error stopping music", "StopMusic, invalid trackId: " + to_string(trackId));
+        Game::GetInstance().Logger("Error stopping music", "StopMusic, invalid trackId: {}\n", trackId);
         return;
     }
         
     MIX_Track *track = m_musicTracks[trackId];
     if (!track)
     {
-        Game::GetInstance().ShowMessage("Error stopping music", "StopMusic, Failed to get track: " + to_string(trackId));
+        Game::GetInstance().Logger("Error stopping music", "StopMusic, Failed to get track: {}\n", trackId);
         return;
     }
 
@@ -217,14 +217,14 @@ int AudioHandler::PlaySoundEffect(const string &filePath, int loops)
     int trackId = GetUnusedSoundEffectTrack();
     if (trackId == -1)
     {
-        Game::GetInstance().ShowMessage("Error playing sound effect", "PlaySoundEffect, no available track");
+        Game::GetInstance().Logger("Error playing sound effect", "PlaySoundEffect, no available track");
         return -1;
     }
 
     MIX_Track *track = m_soundEffectTracks[trackId];
     if (!track)
     {
-        Game::GetInstance().ShowMessage("Error playing sound effect", "PlaySoundEffect, Failed to get track: " + to_string(trackId));
+        Game::GetInstance().Logger("Error playing sound effect", "PlaySoundEffect, Failed to get track: {}\n", trackId);
         return -1;
     }
 
@@ -232,7 +232,7 @@ int AudioHandler::PlaySoundEffect(const string &filePath, int loops)
     MIX_Audio *soundEffect = AssetsHandler::GetInstance().GetSoundEffect(soundEffectId);
     if (!soundEffect)
     {
-        Game::GetInstance().ShowMessage("Error playing sound effect", "PlaySoundEffect, Failed to load sound effect: " + filePath);
+        Game::GetInstance().Logger("Error playing sound effect", "PlaySoundEffect, Failed to load sound effect: {}\n", filePath);
         AssetsHandler::GetInstance().UnUsedSoundEffect(soundEffectId);
         return -1;
     }
@@ -242,7 +242,7 @@ int AudioHandler::PlaySoundEffect(const string &filePath, int loops)
     int channel = MIX_PlayTrack(track, loops);
     if (channel < 0)
     {
-        Game::GetInstance().ShowMessage("Error playing sound effect", "PlaySoundEffect, MIX_PlayTrack failed");
+        Game::GetInstance().Logger("Error playing sound effect", "PlaySoundEffect, MIX_PlayTrack failed");
         AssetsHandler::GetInstance().UnUsedSoundEffect(soundEffectId);
         return -1;
     }
@@ -265,14 +265,14 @@ void AudioHandler::StopSoundEffect(int trackId, int fadeOutMs)
 {
     if (trackId < 0 || trackId >= static_cast<int>(m_soundEffectTracks.size()))
     {
-        Game::GetInstance().ShowMessage("Error stopping sound effect", "StopSoundEffect, invalid trackId: " + to_string(trackId));
+        Game::GetInstance().Logger("Error stopping sound effect", "StopSoundEffect, invalid trackId: {}\n", trackId);
         return;
     }
 
     MIX_Track *track = m_soundEffectTracks[trackId];
     if (!track)
     {
-        Game::GetInstance().ShowMessage("Error stopping sound effect", "StopSoundEffect, Failed to get track: " + to_string(trackId));
+        Game::GetInstance().Logger("Error stopping sound effect", "StopSoundEffect, Failed to get track: {}\n", trackId);
         return;
     }
 

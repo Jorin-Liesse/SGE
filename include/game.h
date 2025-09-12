@@ -6,6 +6,7 @@
 #include "statusHandler.h"
 #include "audioHandler.h"
 #include "resolutionHandler.h"
+#include "inputHandler.h"
 #include "cJSON.h"
 
 #include <SDL3/SDL.h>
@@ -48,7 +49,7 @@ namespace sge
         SDL_AppResult GetAppResult();
         void SetAppResult(SDL_AppResult result);
 
-        void ShowMessage(const std::string &title, const std::string &message = "");
+        void Logger(const std::string &title, const char *fmt = "", ...);
 
     private:
         SDL_Event *m_event;

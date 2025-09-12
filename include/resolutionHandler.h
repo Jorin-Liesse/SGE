@@ -1,6 +1,7 @@
 #pragma once
 #include "patterns/singleton/singleton.h"
 #include "patterns/event/event.h"
+#include "patterns/event/event.h"
 #include "assetsHandler.h"
 #include "saveDataHandler.h"
 #include "game.h"
@@ -21,6 +22,8 @@ namespace sge
 
         void Init();
         void Cleanup();
+
+        void HandleEvents(SDL_Event *event);
 
         patterns::Event<int, int> OnResolutionChange;
         patterns::Event<std::string> OnWindowModeChange;

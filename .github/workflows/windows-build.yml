@@ -23,10 +23,15 @@ jobs:
               PROJECT=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['project'])")
               ASSETS_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['assets-path'])")
               RESOURCES_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['resources-path'])")
+              BUILD_MODE=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['build-mode'])")
+              BUILD_MODE_CAP=${BUILD_MODE^}
+
               echo "ICON_PATH=$ICON_PATH" >> $GITHUB_ENV
               echo "PROJECT=$PROJECT" >> $GITHUB_ENV
               echo "ASSETS_PATH=$ASSETS_PATH" >> $GITHUB_ENV
               echo "RESOURCES_PATH=$RESOURCES_PATH" >> $GITHUB_ENV
+              echo "BUILD_MODE=$BUILD_MODE" >> $GITHUB_ENV
+              echo "BUILD_MODE_CAP=$BUILD_MODE_CAP" >> $GITHUB_ENV
 
           - name: Install ImageMagick
             run: choco install imagemagick --yes
@@ -52,9 +57,9 @@ jobs:
             with: 
                 name: ${{ env.PROJECT }}-${{ matrix.target }}-${{ matrix.arch }}
                 path: |
-                    build/Release/${{ env.ASSETS_PATH }}
-                    build/Release/${{ env.PROJECT }}.exe
-                    build/Release/SDL3.dll
-                    build/Release/SDL3_image.dll
-                    build/Release/SDL3_mixer.dll
-                    build/Release/SDL3_ttf.dll
+                    build/${{ env.BUILD_MODE_CAP }}/${{ env.ASSETS_PATH }}
+                    build/${{ env.BUILD_MODE_CAP }}/${{ env.PROJECT }}.exe
+                    build/${{ env.BUILD_MODE_CAP }}/SDL3.dll
+                    build/${{ env.BUILD_MODE_CAP }}/SDL3_image.dll
+                    build/${{ env.BUILD_MODE_CAP }}/SDL3_mixer.dll
+                    build/${{ env.BUILD_MODE_CAP }}/SDL3_ttf.dll

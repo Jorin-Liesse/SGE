@@ -5,7 +5,7 @@
             "label": "Build (x64 Windows)",
             "type": "shell",
             "command": "bash",
-            "args": ["./config/win-build.sh"],
+            "args": ["./config/win-build.sh", "--architecture=x64", "--launch=true"],
             "group": {
                 "kind": "build",
                 "isDefault": true

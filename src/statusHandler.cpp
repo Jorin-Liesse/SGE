@@ -26,7 +26,6 @@ void StatusHandler::Init()
 
 void StatusHandler::Cleanup()
 {
-    // Cleanup resources if needed
 }
 
 #pragma endregion

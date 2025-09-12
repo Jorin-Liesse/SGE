@@ -10,7 +10,7 @@ using namespace sge;
 
 SDL_AppResult SDL_Fail()
 {
-    Game::GetInstance().ShowMessage("Error", SDL_GetError());
+    Game::GetInstance().Logger("Error", SDL_GetError());
     return SDL_APP_FAILURE;
 }
 

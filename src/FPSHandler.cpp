@@ -40,13 +40,13 @@ void FPSHandler::Init()
     int defaultFps = cJSON_GetObjectItem(infoJson, "default-fps")->valueint;
     bool defaultVsync = cJSON_GetObjectItem(infoJson, "default-vsync")->valueint;
 
-    AssetsHandler::GetInstance().UnUsedJson(infoDataId);
-
     m_fps = SaveDataHandler::GetInstance().LoadIntData("fps", defaultFps);
     m_vsync = SaveDataHandler::GetInstance().LoadBoolData("vsync", defaultVsync);
 
     ChangedFps();
     ChangedVsync();
+
+    AssetsHandler::GetInstance().UnUsedJson(infoDataId);
 }
 
 void FPSHandler::CleanUp()

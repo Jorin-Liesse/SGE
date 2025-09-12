@@ -194,6 +194,17 @@ void SaveDataHandler::SaveData(const std::string &key, bool value)
     SaveToDisk();
 }
 
+void SaveDataHandler::SaveData(const std::string& key, cJSON* value)
+{
+    cJSON* item = cJSON_GetObjectItem(m_root, key.c_str());
+    if (item)
+        cJSON_ReplaceItemInObject(m_root, key.c_str(), value);
+    else
+        cJSON_AddItemToObject(m_root, key.c_str(), value);
+
+    SaveToDisk();
+}
+
 
 std::string SaveDataHandler::LoadStringData(const std::string &key, std::string defaultValue)
 {
@@ -233,6 +244,22 @@ bool SaveDataHandler::LoadBoolData(const std::string &key, bool defaultValue)
 
     SaveData(key, defaultValue);
     return defaultValue;
+}
+
+cJSON* SaveDataHandler::LoadJsonData(const std::string& key, cJSON* defaultValue)
+{
+    cJSON* item = cJSON_GetObjectItem(m_root, key.c_str());
+    if (item)
+        return item;
+    
+    if (defaultValue)
+    {
+        cJSON* copy = cJSON_Duplicate(defaultValue, 1); // deep copy
+        SaveData(key, copy);
+        return cJSON_GetObjectItem(m_root, key.c_str());
+    }
+
+    return nullptr;
 }
 
 #pragma endregion
