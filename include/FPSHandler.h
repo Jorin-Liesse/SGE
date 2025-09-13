@@ -1,6 +1,7 @@
 #pragma once
 #include "patterns/singleton/singleton.h"
 #include "game.h"
+#include "testHandler.h"
 
 #include <SDL3/SDL_stdinc.h>
 

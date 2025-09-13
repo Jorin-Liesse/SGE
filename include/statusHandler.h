@@ -1,6 +1,7 @@
 #pragma once
 #include "patterns/singleton/singleton.h"
 #include "patterns/event/event.h"
+#include "testHandler.h"
 #include <SDL3/SDL.h>
 
 namespace sge
@@ -16,7 +17,7 @@ namespace sge
         void Init();
         void Cleanup();
 
-        void HandleEvents(SDL_Event *event);
+        void Event(SDL_Event *event);
 
         patterns::Event<bool> OnVisibilityChange;
         patterns::Event<bool> OnFocusChange;

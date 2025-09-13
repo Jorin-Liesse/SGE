@@ -92,10 +92,19 @@ else()
     add_executable(${EXECUTABLE_NAME})
 endif()
 
+if(JSON_BUILD_MODE STREQUAL "debug")
+    message(STATUS "JSON specifies Debug build")
+    add_definitions(-DDEBUG_MODE)
+elseif(JSON_BUILD_MODE STREQUAL "release")
+    message(STATUS "JSON specifies Release build")
+    add_definitions(-DRELEASE_MODE)
+endif()
+
+
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${JSON_INCLUDE_PATH})
 
 # Automatically include all .cpp files in src/
-file(GLOB SOURCES ${JSON_SOURCE_PATH}/*.cpp)
+file(GLOB_RECURSE SOURCES "${JSON_SOURCE_PATH}/*.cpp")
 
 # Add manually extra files (e.g., platform-specific or non-.cpp files)
 if(ANDROID)

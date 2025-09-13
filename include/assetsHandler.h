@@ -3,6 +3,7 @@
 #include "game.h"
 #include "cJSON.h"
 #include "assetEntry.h"
+#include "testHandler.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>

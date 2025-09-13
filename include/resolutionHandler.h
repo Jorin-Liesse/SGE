@@ -4,6 +4,7 @@
 #include "patterns/event/event.h"
 #include "assetsHandler.h"
 #include "saveDataHandler.h"
+#include "testHandler.h"
 #include "game.h"
 #include "cJSON.h"
 
@@ -23,7 +24,7 @@ namespace sge
         void Init();
         void Cleanup();
 
-        void HandleEvents(SDL_Event *event);
+        void Event(SDL_Event *event);
 
         patterns::Event<int, int> OnResolutionChange;
         patterns::Event<std::string> OnWindowModeChange;

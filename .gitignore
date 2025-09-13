@@ -7,6 +7,7 @@
 /[Oo]ut/
 
 /[Uu]ninclude/
+/imgui.ini
 
 # /SDL/
 # /SDL_image/

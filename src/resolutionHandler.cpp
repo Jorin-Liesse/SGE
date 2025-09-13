@@ -45,7 +45,7 @@ void ResolutionHandler::Cleanup()
 
 #pragma region Engine Methods
 
-void ResolutionHandler::HandleEvents(SDL_Event *event)
+void ResolutionHandler::Event(SDL_Event *event)
 {
     if (event->type == SDL_EVENT_WINDOW_RESIZED)
     {
@@ -55,7 +55,7 @@ void ResolutionHandler::HandleEvents(SDL_Event *event)
 
         ChangedResolution();
 
-        Game::GetInstance().Logger("ResolutionHandler", "Window resized to %dx%d", m_width, m_height);
+        TestHandler::GetInstance().Logger("ResolutionHandler", "Window resized to %dx%d", m_width, m_height);
     }
 }
 

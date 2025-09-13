@@ -38,28 +38,28 @@ void InputHandler::Cleanup()
 
 #pragma region Engine Methods
 
-void InputHandler::HandleEvents(SDL_Event *event)
+void InputHandler::Event(SDL_Event *event)
 {
     if (event->type == SDL_EVENT_KEY_DOWN)
     {
         SDL_KeyboardEvent e = event->key;
-        Game::GetInstance().Logger("InputHandler", "Key down: %s (scancode=%d)", SDL_GetKeyName(e.key), e.scancode);
+        TestHandler::GetInstance().Logger("InputHandler", "Key down: %s (scancode=%d)", SDL_GetKeyName(e.key), e.scancode);
     }
     else if (event->type == SDL_EVENT_KEY_UP)
     {
         SDL_KeyboardEvent e = event->key;
-        Game::GetInstance().Logger("InputHandler", "Key up: %s (scancode=%d)", SDL_GetKeyName(e.key), e.scancode);
+        TestHandler::GetInstance().Logger("InputHandler", "Key up: %s (scancode=%d)", SDL_GetKeyName(e.key), e.scancode);
     }
 
     else if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN)
     {
         SDL_MouseButtonEvent e = event->button;
-        Game::GetInstance().Logger("InputHandler", "Mouse button %d down", e.button);
+        TestHandler::GetInstance().Logger("InputHandler", "Mouse button %d down", e.button);
     }
     else if (event->type == SDL_EVENT_MOUSE_BUTTON_UP)
     {
         SDL_MouseButtonEvent e = event->button;
-        Game::GetInstance().Logger("InputHandler", "Mouse button %d up", e.button);
+        TestHandler::GetInstance().Logger("InputHandler", "Mouse button %d up", e.button);
     }
     else if (event->type == SDL_EVENT_MOUSE_MOTION)
     {
@@ -70,7 +70,7 @@ void InputHandler::HandleEvents(SDL_Event *event)
         Sint32 mouseRelX = e.xrel;
         Sint32 mouseRelY = e.yrel;
 
-        Game::GetInstance().Logger("InputHandler", "Mouse moved to (%d, %d), relative (%d, %d)", mouseX, mouseY, mouseRelX, mouseRelY);
+        TestHandler::GetInstance().Logger("InputHandler", "Mouse moved to (%d, %d), relative (%d, %d)", mouseX, mouseY, mouseRelX, mouseRelY);
     }
     else if (event->type == SDL_EVENT_MOUSE_WHEEL)
     {
@@ -82,7 +82,7 @@ void InputHandler::HandleEvents(SDL_Event *event)
         if (e.direction == SDL_MOUSEWHEEL_FLIPPED)
             scrollY = -scrollY;
 
-        Game::GetInstance().Logger("InputHandler", "Mouse wheel scrolled: x=%d, y=%d", scrollX, scrollY);
+        TestHandler::GetInstance().Logger("InputHandler", "Mouse wheel scrolled: x=%d, y=%d", scrollX, scrollY);
     }
 
     // Touch events

@@ -7,6 +7,7 @@
 #include "audioHandler.h"
 #include "resolutionHandler.h"
 #include "inputHandler.h"
+#include "testHandler.h"
 #include "cJSON.h"
 
 #include <SDL3/SDL.h>
@@ -49,40 +50,11 @@ namespace sge
         SDL_AppResult GetAppResult();
         void SetAppResult(SDL_AppResult result);
 
-        void Logger(const std::string &title, const char *fmt = "", ...);
-
     private:
         SDL_Event *m_event;
         SDL_Window *m_window;
         SDL_Renderer *m_renderer;
         SDL_AppResult m_appResult;
         MIX_Mixer *m_mixer;
-
-        //
-        SDL_Texture *m_messageTex, *m_imageTex, *m_fpsTex;
-        SDL_FRect m_messageDest, m_fpsDest;
-
-        int m_fontId;
-
-        float m_time;
-        float m_red;
-        float m_green;
-        float m_blue;
-
-        void TestInit();
-        void TestUpdate();
-        void TestRender();
-        void TestEvent(SDL_Event *event);
-
-        void TestTextInit();
-        void TestAudioInit();
-        void TestImageInit();
-        void TestSaveDataInit();
-        void TestStatusInit();
-
-        void TestFPSInit();
-        void TestFPSUpdate();
-
-        //
     };
 }

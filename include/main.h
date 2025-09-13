@@ -2,6 +2,7 @@
 #define SDL_MAIN_USE_CALLBACKS
 
 #include "game.h"
+#include "testHandler.h"
 
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_init.h>

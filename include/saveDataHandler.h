@@ -1,6 +1,7 @@
 #pragma once
 #include "patterns/singleton/singleton.h"
 #include "assetsHandler.h"
+#include "testHandler.h"
 #include "game.h"
 #include "cJSON.h"
 

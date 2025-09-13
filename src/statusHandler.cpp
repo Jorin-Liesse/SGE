@@ -32,7 +32,7 @@ void StatusHandler::Cleanup()
 
 #pragma region Public Methods
 
-void StatusHandler::HandleEvents(SDL_Event *event)
+void StatusHandler::Event(SDL_Event *event)
 {
     if (event->type < SDL_EVENT_WINDOW_FIRST || event->type > SDL_EVENT_WINDOW_LAST)
         return;
