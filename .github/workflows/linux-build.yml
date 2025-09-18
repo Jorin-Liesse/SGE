@@ -1,0 +1,58 @@
+name: Build for Linux
+on: [workflow_dispatch]
+
+jobs:
+    build-linux:
+        name: Build for Linux
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+            with:
+                submodules: recursive
+
+          - name: Set project env vars
+            run: |
+              ICON_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['icon-path'])")
+              PROJECT=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['project'])")
+              ASSETS_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['assets-path'])")
+              RESOURCES_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['resources-path'])")
+              echo "ICON_PATH=$ICON_PATH" >> $GITHUB_ENV
+              echo "PROJECT=$PROJECT" >> $GITHUB_ENV
+              echo "ASSETS_PATH=$ASSETS_PATH" >> $GITHUB_ENV
+              echo "RESOURCES_PATH=$RESOURCES_PATH" >> $GITHUB_ENV
+
+          - name: Replace placeholders with env vars
+            run: |
+              # Export all workflow env vars to shell
+              export PROJECT="${{ env.PROJECT }}"
+
+              # Replace placeholders in all relevant files
+              for file in ${{ env.RESOURCES_PATH }}/${{ env.PROJECT }}.desktop.in; do
+                envsubst < "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+              done
+
+          - name: Install Dependencies
+            run: |
+                sudo apt update
+                sudo apt install -y --no-install-recommends build-essential git cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev libaudio-dev libjack-dev libsndio-dev libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
+          - name: Configure
+            run: cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -S . -B build
+          - name: Build
+            run: cmake --build build --target ${{ env.PROJECT }} --config Release
+
+          - name: Copy Assets
+            run: |
+              mkdir -p build/Release/assets
+              cp -r "${{ env.ASSETS_PATH }}"/* build/Release/${{ env.ASSETS_PATH }}
+
+          - name: Upload Build
+            uses: actions/upload-artifact@v4
+            with: 
+                name: ${{ env.PROJECT }}-Linux
+                path: |
+                    build/Release/${{ env.ASSETS_PATH }}
+                    build/Release/${{ env.PROJECT }}
+                    build/Release/libSDL3.so.0
+                    build/Release/libSDL3_image.so.0
+                    build/Release/libSDL3_mixer.so.0
+                    build/Release/libSDL3_ttf.so.0

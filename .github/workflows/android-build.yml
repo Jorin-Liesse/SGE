@@ -1,6 +1,5 @@
-name: Build Sample for Android
-
-on: [push, pull_request]
+name: Build for Android
+on: [workflow_dispatch]
 
 jobs:
   apk:
@@ -13,20 +12,46 @@ jobs:
           submodules: recursive
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
+
 
       - name: Update the build.gradle
-        run:  |
-               cp build.gradle SDL/android-project/app/
+        run: |
+          cp build.gradle SDL/android-project/app/
+
+      - name: Set project env vars
+        run: |
+          ICON_PATH=$(python3 -c "import json; print(json.load(open('assets/data/info.json'))['icon-path'])")
+          echo "ICON_PATH=$ICON_PATH" >> $GITHUB_ENV
+
+      - name: Inject custom app icon
+        run: |
+          sudo apt-get update && sudo apt-get install -y imagemagick
+          declare -A sizes=(["mdpi"]=48 ["hdpi"]=72 ["xhdpi"]=96 ["xxhdpi"]=144 ["xxxhdpi"]=192)
+          for d in "${!sizes[@]}"; do
+            mkdir -p SDL/android-project/app/src/main/res/mipmap-$d
+            convert ${{ env.ICON_PATH }} -resize ${sizes[$d]}x${sizes[$d]} SDL/android-project/app/src/main/res/mipmap-$d/ic_launcher.png
+          done
 
       - name: Build the APK
         run: |
-              cd SDL/android-project/
-              ./gradlew assembleDebug
+          cd SDL/android-project/
+          ./gradlew assembleDebug
 
       - name: Upload the APK
         uses: actions/upload-artifact@v4
         with: 
           name: app-debug.apk
           path: SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
+
+      # - name: Build the Release APK
+      #   run: |
+      #     cd SDL/android-project/
+      #     ./gradlew assembleRelease
+
+      # - name: Upload the Release APK
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: app-release.apk
+      #     path: SDL/android-project/app/build/outputs/apk/release/app-release-unsigned.apk

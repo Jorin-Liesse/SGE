@@ -1,0 +1,17 @@
+{
+  "name": "${PROJECT}",
+  "start_url": "/${PROJECT}/",
+  "scope": "/${PROJECT}/",
+  "display": "${MANIFEST_WINDOW_MODE}",
+  "theme_color": "#000",
+  "background_color": "#000",
+  "orientation": "${MANIFEST_ORIENTATION}",
+  "icons": [
+    {
+      "src": "${ICON_PATH}",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

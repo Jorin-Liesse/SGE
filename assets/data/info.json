@@ -1,0 +1,158 @@
+{
+  "project": "SGE",
+  "company": "Sapodilla-Games",
+  "version": "0.1.0",
+  "description": "A simple game engine using SDL3",
+  "author": "Jorin Liesse",
+  "license": "all rights reserved license",
+  "build-mode": "Debug", 
+  "credits": [
+    {
+      "name": "sdl3-sample",
+      "author": "Ravbug",
+      "website": "https://www.ravbug.com/",
+      "license": "CC0 1.0 Universal",
+      "link": "https://github.com/Ravbug/sdl3-sample"
+    },
+    {
+      "name": "cJSON",
+      "author": "Dave Gamble",
+      "website": "https://github.com/DaveGamble",
+      "license": "MIT",
+      "link": "https://github.com/DaveGamble/cJSON"
+    }
+  ],
+
+  "music-track-pool-size": 5,
+  "sound-effect-track-pool-size": 10,
+
+  "manifest-orientation": "landscape",
+  "manifest-window-mode": "fullscreen",
+
+  "min-width": 640,
+  "min-height": 480,
+
+  "input-mode": "single",
+
+  "default-width": 1280,
+  "default-height": 720,
+  "default-window-mode": "windowed",
+  "default-scale": 1,
+
+  "default-fps": 60,
+  "default-vsync": true,
+
+  "default-audio-volume": 1,
+  "default-music-volume": 1,
+  "default-sound-volume": 1,
+
+  "default-input-map": {
+    "navigate-up": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["ArrowUp"],
+        "mouse": [],
+        "gamepad": ["DPadUp", "LeftStickUp"],
+        "touch": []
+      }
+    },
+    "navigate-down": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["ArrowDown"],
+        "mouse": [],
+        "gamepad": ["DPadDown", "LeftStickDown"],
+        "touch": []
+      }
+    },
+    "navigate-left": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["ArrowLeft"],
+        "mouse": [],
+        "gamepad": ["DPadLeft", "LeftStickLeft"],
+        "touch": []
+      }
+    },
+    "navigate-right": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["ArrowRight"],
+        "mouse": [],
+        "gamepad": ["DPadRight", "LeftStickRight"],
+        "touch": []
+      }
+    },
+    "submit": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["Enter", "Space"],
+        "mouse": [],
+        "gamepad": ["ButtonSouth"],
+        "touch": []
+      }
+    },
+    "cancel": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["Escape", "Backspace"],
+        "mouse": [],
+        "gamepad": ["ButtonEast"],
+        "touch": []
+      }
+    },
+    "point": {
+      "type": "motion",
+      "bindings": {
+        "keyboard": [],
+        "mouse": ["MouseMotion"],
+        "gamepad": [],
+        "touch": ["TouchMotion"]
+      }
+    },
+    "click": {
+      "type": "press",
+      "bindings": {
+        "keyboard": [],
+        "mouse": ["MouseButtonLeft"],
+        "gamepad": [],
+        "touch": ["TouchFinger"]
+      }
+    },
+
+    "pause": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["Escape"],
+        "mouse": [],
+        "gamepad": ["StartButton"],
+        "touch": []
+      }
+    },
+    "fullscreen": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["F11"],
+        "mouse": [],
+        "gamepad": [],
+        "touch": []
+      }
+    },
+
+    "flap": {
+      "type": "press",
+      "bindings": {
+        "keyboard": ["Space"],
+        "mouse": ["MouseButtonLeft"],
+        "gamepad": ["ButtonSouth"],
+        "touch": ["TouchFinger"]
+      }
+    }
+  },
+
+  "icon-path": "assets/icons/icon.png",
+  "assets-path": "assets",
+  "resources-path": "resources",
+  "include-path": "include",
+  "source-path": "src"
+}
